@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Self-Esteem Game - Interactive Family Adventure!</title>
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --sun: #FFD93D;
+  --grass: #6BCB77;
+  --heart: #FF6B6B;
+  --purple: #9B59B6;
+  --ocean: #4FC3F7;
+  --orange: #FF9F43;
+  --pink: #FD79A8;
+  --mint: #00B894;
+  --bg: #FFF8E7;
+  --board-bg: #F0F7FF;
+  --text: #2D3436;
+  --text-light: #636E72;
+  --shadow: rgba(0,0,0,0.1);
+
+  /* Category colors */
+  --within: #9B59B6;
+  --within-bg: #F3E5F5;
+  --within-light: #E1BEE7;
+  --friends: #4FC3F7;
+  --friends-bg: #E1F5FE;
+  --friends-light: #B3E5FC;
+  --family: #FF9F43;
+  --family-bg: #FFF3E0;
+  --family-light: #FFE0B2;
+  --general: #6BCB77;
+  --general-bg: #E8F5E9;
+  --general-light: #C8E6C9;
+  --setback: #FF6B6B;
+  --setback-bg: #FFEBEE;
+  --setback-light: #FFCDD2;
+}
+
+body {
+  font-family: 'Segoe UI', 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 40% { transform: translateY(-20px); } 60% { transform: translateY(-10px); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes slideInCard { from { opacity: 0; transform: rotateY(90deg) scale(0.8); } to { opacity: 1; transform: rotateY(0) scale(1); } }
+@keyframes confetti-fall { 0% { transform: translateY(-100%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+@keyframes wiggle { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
+@keyframes sparkle { 0%,100% { opacity: 0; transform: scale(0); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes glow { 0%,100% { box-shadow: 0 0 5px var(--sun); } 50% { box-shadow: 0 0 25px var(--sun), 0 0 50px var(--orange); } }
+@keyframes dice-roll { 0% { transform: rotateX(0) rotateY(0); } 25% { transform: rotateX(90deg) rotateY(90deg); } 50% { transform: rotateX(180deg) rotateY(180deg); } 75% { transform: rotateX(270deg) rotateY(90deg); } 100% { transform: rotateX(360deg) rotateY(360deg); } }
+@keyframes moveForward { 0% { color: var(--grass); transform: scale(1); } 50% { color: var(--grass); transform: scale(1.3); } 100% { color: var(--grass); transform: scale(1); } }
+@keyframes moveBack { 0% { color: var(--heart); transform: scale(1); } 50% { color: var(--heart); transform: scale(1.3); } 100% { color: var(--heart); transform: scale(1); } }
+@keyframes shakeHead { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
+@keyframes heroFloat { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
+
+/* ========== SPLASH / TITLE SCREEN ========== */
+#splash-screen {
+  position: fixed; inset: 0; z-index: 1000;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  overflow: hidden;
+}
+#splash-screen.hidden { opacity: 0; transform: scale(1.1); pointer-events: none; }
+
+.splash-bg-shapes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.splash-shape {
+  position: absolute; border-radius: 50%; opacity: 0.08;
+  background: white;
+}
+
+.splash-stars { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.splash-star {
+  position: absolute; font-size: 24px;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.splash-mascot {
+  font-size: 100px; margin-bottom: 20px;
+  animation: heroFloat 4s ease-in-out infinite;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+}
+.splash-title {
+  font-size: clamp(38px, 8vw, 72px); font-weight: 900;
+  color: white; text-align: center;
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+  margin-bottom: 8px; line-height: 1.1;
+}
+.splash-subtitle {
+  font-size: clamp(16px, 3vw, 24px); color: rgba(255,255,255,0.85);
+  text-align: center; margin-bottom: 12px; font-weight: 400;
+}
+.splash-tagline {
+  font-size: 14px; color: rgba(255,255,255,0.55);
+  text-align: center; margin-bottom: 40px; max-width: 400px; line-height: 1.5;
+}
+.splash-play-btn {
+  background: var(--sun); color: var(--text); border: none;
+  font-size: 22px; font-weight: 800; padding: 18px 56px;
+  border-radius: 50px; cursor: pointer;
+  box-shadow: 0 6px 0 #E6B800, 0 10px 30px rgba(0,0,0,0.2);
+  transition: all 0.15s; text-transform: uppercase; letter-spacing: 2px;
+}
+.splash-play-btn:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #E6B800, 0 15px 40px rgba(0,0,0,0.25); }
+.splash-play-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #E6B800, 0 5px 15px rgba(0,0,0,0.2); }
+
+.splash-cards-preview {
+  display: flex; gap: 16px; margin-top: 40px; opacity: 0.7;
+}
+.splash-card-mini {
+  width: 60px; height: 80px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  animation: float 3s ease-in-out infinite;
+}
+.splash-card-mini:nth-child(2) { animation-delay: 0.5s; }
+.splash-card-mini:nth-child(3) { animation-delay: 1s; }
+.splash-card-mini:nth-child(4) { animation-delay: 1.5s; }
+
+/* ========== PLAYER SETUP SCREEN ========== */
+#setup-screen {
+  display: none; position: fixed; inset: 0; z-index: 900;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  flex-direction: column; align-items: center; justify-content: center;
+  padding: 30px; overflow-y: auto;
+}
+#setup-screen.visible { display: flex; }
+
+.setup-box {
+  background: white; border-radius: 24px; padding: 36px 44px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  max-width: 560px; width: 100%; animation: slideIn 0.5s ease;
+}
+.setup-title { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 6px; color: var(--purple); }
+.setup-sub { text-align: center; color: var(--text-light); margin-bottom: 24px; font-size: 15px; }
+
+.player-input-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+  background: #f8f9fa; border-radius: 12px; padding: 10px 14px;
+}
+.player-avatar-select {
+  font-size: 34px; cursor: pointer; transition: transform 0.2s;
+  user-select: none; min-width: 42px; text-align: center;
+}
+.player-avatar-select:hover { transform: scale(1.2); }
+.player-name-input {
+  flex: 1; border: 2px solid #e0e0e0; border-radius: 10px;
+  padding: 10px 14px; font-size: 17px; font-weight: 600;
+  outline: none; transition: border-color 0.2s; font-family: inherit;
+}
+.player-name-input:focus { border-color: var(--purple); }
+.player-name-input::placeholder { color: #ccc; }
+.remove-player-btn {
+  background: var(--heart); color: white; border: none;
+  width: 30px; height: 30px; border-radius: 50%;
+  font-size: 16px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: transform 0.2s;
+}
+.remove-player-btn:hover { transform: scale(1.1); }
+
+.add-player-btn {
+  width: 100%; padding: 12px; border: 3px dashed #ccc;
+  border-radius: 12px; background: transparent;
+  font-size: 15px; font-weight: 600; color: var(--text-light);
+  cursor: pointer; transition: all 0.2s; margin-bottom: 20px;
+}
+.add-player-btn:hover { border-color: var(--purple); color: var(--purple); }
+
+.setup-rules {
+  background: #f8f9fa; border-radius: 14px; padding: 18px 22px;
+  margin-bottom: 20px; font-size: 13px; line-height: 1.7; color: var(--text-light);
+}
+.setup-rules h3 { font-size: 15px; color: var(--text); margin-bottom: 8px; }
+.setup-rules ul { padding-left: 20px; }
+
+.start-game-btn {
+  width: 100%; padding: 16px; background: var(--grass);
+  color: white; border: none; border-radius: 14px;
+  font-size: 19px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 0 #4CAF50;
+  transition: all 0.15s; text-transform: uppercase; letter-spacing: 1px;
+}
+.start-game-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #4CAF50; }
+.start-game-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #4CAF50; }
+
+/* ========== MAIN GAME ========== */
+#game-screen { display: none; min-height: 100vh; }
+#game-screen.visible { display: block; }
+
+/* Top bar */
+.game-header {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white; padding: 12px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 8px;
+}
+.game-logo { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.turn-indicator {
+  background: rgba(255,255,255,0.2); border-radius: 50px;
+  padding: 8px 18px; font-weight: 700; font-size: 15px;
+  display: flex; align-items: center; gap: 8px;
+}
+.header-btns { display: flex; gap: 8px; }
+.header-btn {
+  background: rgba(255,255,255,0.2); border: none; color: white;
+  width: 38px; height: 38px; border-radius: 50%;
+  font-size: 18px; cursor: pointer; transition: background 0.2s;
+}
+.header-btn:hover { background: rgba(255,255,255,0.35); }
+
+/* Player scoreboard */
+.scoreboard {
+  display: flex; gap: 10px; padding: 14px 20px;
+  background: white; border-bottom: 3px solid #f0f0f0;
+  overflow-x: auto;
+}
+.score-card {
+  flex-shrink: 0; display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; border-radius: 14px;
+  background: #f8f9fa; border: 3px solid transparent;
+  transition: all 0.3s; min-width: 150px;
+}
+.score-card.active { border-color: var(--sun); background: #FFFDE7; animation: glow 2s infinite; }
+.score-avatar { font-size: 30px; }
+.score-info { display: flex; flex-direction: column; }
+.score-name { font-weight: 700; font-size: 14px; }
+.score-stars { color: var(--sun); font-size: 12px; font-weight: 600; }
+.score-pos { font-size: 11px; color: var(--text-light); }
+
+/* Game area */
+.game-area {
+  display: grid; grid-template-columns: 1fr 360px;
+  gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto;
+}
+
+/* Board */
+.board-container {
+  background: var(--board-bg); border-radius: 24px;
+  padding: 24px; box-shadow: 0 8px 32px var(--shadow);
+  border: 3px solid #e3f2fd; position: relative; overflow: hidden;
+}
+.board-container::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 20% 30%, rgba(135,206,235,0.12), transparent 50%),
+              radial-gradient(circle at 80% 70%, rgba(107,203,119,0.08), transparent 50%);
+  pointer-events: none;
+}
+
+.board-path {
+  display: grid; grid-template-columns: repeat(8, 1fr);
+  gap: 6px; position: relative;
+}
+
+.board-space {
+  aspect-ratio: 1; border-radius: 14px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; cursor: default;
+  position: relative; transition: all 0.3s;
+  border: 3px solid transparent; padding: 3px;
+  min-height: 65px;
+}
+.board-space:hover { transform: scale(1.05); z-index: 5; }
+.board-space .space-num { font-size: 10px; font-weight: 800; opacity: 0.4; position: absolute; top: 3px; right: 6px; }
+.board-space .space-icon { font-size: 20px; margin-bottom: 1px; }
+.board-space .space-label { font-size: 8px; text-align: center; line-height: 1.2; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.space-within { background: linear-gradient(135deg, #F3E5F5, #E1BEE7); border-color: #CE93D8; color: #6A1B9A; }
+.space-friends { background: linear-gradient(135deg, #E1F5FE, #B3E5FC); border-color: #81D4FA; color: #0277BD; }
+.space-family { background: linear-gradient(135deg, #FFF3E0, #FFE0B2); border-color: #FFB74D; color: #E65100; }
+.space-general { background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border-color: #A5D6A7; color: #2E7D32; }
+.space-star { background: linear-gradient(135deg, #FFF9C4, #FFF176); border-color: #FFD54F; color: #F57F17; animation: pulse 2s infinite; }
+.space-start { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-color: #5C6BC0; }
+.space-finish { background: linear-gradient(135deg, #FFD700, #FFA000); color: white; border-color: #FF8F00; animation: glow 3s infinite; }
+
+/* Player tokens on board */
+.player-token {
+  position: absolute; font-size: 18px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 10; pointer-events: none;
+}
+
+/* Right panel */
+.side-panel { display: flex; flex-direction: column; gap: 14px; }
+
+/* Dice */
+.dice-area {
+  background: white; border-radius: 20px; padding: 20px;
+  box-shadow: 0 6px 24px var(--shadow); text-align: center;
+}
+.dice-label { font-size: 13px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.dice-container { width: 90px; height: 90px; margin: 12px auto; perspective: 300px; }
+.dice {
+  width: 90px; height: 90px; background: white;
+  border-radius: 14px; border: 4px solid var(--text);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 42px; font-weight: 900;
+  box-shadow: 0 5px 0 #ddd, 0 8px 16px rgba(0,0,0,0.12);
+  cursor: pointer; transition: transform 0.1s; user-select: none;
+}
+.dice.rolling { animation: dice-roll 0.6s ease-in-out; }
+.dice:hover:not(.rolling) { transform: translateY(-3px); }
+
+.roll-btn {
+  background: var(--heart); color: white; border: none;
+  padding: 12px 36px; border-radius: 50px;
+  font-size: 17px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 0 #E53935;
+  transition: all 0.15s; text-transform: uppercase; letter-spacing: 1px;
+  margin-top: 6px;
+}
+.roll-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 #E53935; }
+.roll-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #E53935; }
+.roll-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Card display */
+.card-area {
+  background: white; border-radius: 20px; padding: 20px;
+  box-shadow: 0 6px 24px var(--shadow);
+  display: flex; flex-direction: column;
+}
+.card-area-title {
+  font-size: 14px; font-weight: 700; margin-bottom: 10px;
+  text-align: center; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-light);
+}
+
+.card-display {
+  border-radius: 16px; padding: 20px;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center;
+  min-height: 220px; position: relative;
+  perspective: 600px;
+}
+.card-display.flip-in { animation: slideInCard 0.5s ease; }
+
+.card-badge {
+  display: inline-block; font-size: 10px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  padding: 4px 12px; border-radius: 50px; margin-bottom: 10px;
+}
+.card-badge.affirmation { background: rgba(107,203,119,0.2); color: #2E7D32; }
+.card-badge.setback { background: rgba(255,107,107,0.2); color: #C62828; }
+
+.card-icon { font-size: 44px; margin-bottom: 10px; }
+.card-text {
+  font-size: 17px; font-weight: 700; line-height: 1.5;
+  margin-bottom: 6px;
+}
+.card-movement {
+  font-size: 15px; font-weight: 800; margin: 8px 0 4px;
+  padding: 6px 18px; border-radius: 50px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.card-movement.ahead { background: #E8F5E9; color: #2E7D32; animation: moveForward 1s ease; }
+.card-movement.back { background: #FFEBEE; color: #C62828; animation: moveBack 1s ease; }
+
+.card-category-label {
+  font-size: 11px; font-weight: 600; color: var(--text-light);
+  text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;
+}
+
+.card-read-btn {
+  margin-top: 12px; padding: 12px 32px; border: none;
+  border-radius: 50px; font-size: 15px; font-weight: 800;
+  cursor: pointer; color: white; transition: all 0.2s;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.card-read-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+.card-placeholder { color: var(--text-light); }
+
+/* Movement log */
+.move-log {
+  background: white; border-radius: 20px; padding: 16px 20px;
+  box-shadow: 0 6px 24px var(--shadow);
+  max-height: 180px; overflow-y: auto;
+}
+.move-log-title { font-size: 13px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.log-entry {
+  font-size: 13px; padding: 6px 0; border-bottom: 1px solid #f0f0f0;
+  display: flex; align-items: center; gap: 6px;
+}
+.log-entry:last-child { border-bottom: none; }
+.log-entry .log-avatar { font-size: 16px; }
+.log-ahead { color: #2E7D32; }
+.log-back { color: #C62828; }
+
+/* Compliment bubble */
+.compliment-bubble {
+  position: fixed; z-index: 600; padding: 16px 28px;
+  background: white; border-radius: 20px;
+  font-size: 18px; font-weight: 700;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  animation: slideUp 0.5s ease, float 2s ease-in-out 0.5s infinite;
+  pointer-events: none;
+}
+
+/* Confetti */
+.confetti-piece {
+  position: fixed; z-index: 700; width: 10px; height: 10px;
+  animation: confetti-fall 3s ease-in forwards;
+  pointer-events: none;
+}
+
+/* Setback overlay shake */
+.board-container.shake { animation: shakeHead 0.5s ease; }
+
+/* Win screen */
+#win-screen {
+  display: none; position: fixed; inset: 0; z-index: 800;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  flex-direction: column; align-items: center; justify-content: center;
+  color: white; text-align: center; padding: 40px; overflow-y: auto;
+}
+#win-screen.visible { display: flex; }
+.win-trophy { font-size: 100px; animation: bounce 2s infinite; margin-bottom: 16px; }
+.win-title { font-size: 44px; font-weight: 900; margin-bottom: 8px; text-shadow: 3px 3px 0 rgba(0,0,0,0.2); }
+.win-subtitle { font-size: 20px; opacity: 0.9; margin-bottom: 12px; }
+.win-message { font-size: 16px; opacity: 0.8; margin-bottom: 30px; max-width: 500px; line-height: 1.6; }
+.win-scores { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
+.win-score-card {
+  background: rgba(255,255,255,0.15); border-radius: 16px;
+  padding: 18px 26px; min-width: 110px;
+}
+.win-score-card .avatar { font-size: 36px; }
+.win-score-card .name { font-weight: 700; margin: 4px 0; }
+.win-score-card .stars { color: var(--sun); font-weight: 800; }
+.play-again-btn {
+  background: var(--sun); color: var(--text); border: none;
+  padding: 16px 44px; border-radius: 50px;
+  font-size: 18px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 6px 0 #E6B800; transition: all 0.15s; text-transform: uppercase;
+}
+.play-again-btn:hover { transform: translateY(-3px); }
+
+/* Read-aloud encouragement */
+.read-aloud-prompt {
+  background: rgba(255,255,255,0.12); border-radius: 12px;
+  padding: 10px 16px; margin-top: 10px;
+  font-size: 12px; color: rgba(255,255,255,0.6);
+  text-align: center; font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .game-area { grid-template-columns: 1fr; }
+  .board-path { grid-template-columns: repeat(6, 1fr); }
+  .setup-box { padding: 28px; }
+}
+@media (max-width: 600px) {
+  .board-path { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .game-header { padding: 10px 14px; }
+  .scoreboard { padding: 10px 14px; gap: 8px; }
+  .game-area { padding: 10px; gap: 10px; }
+  .board-container { padding: 12px; }
+  .board-space { min-height: 52px; }
+  .board-space .space-icon { font-size: 16px; }
+  .board-space .space-label { font-size: 7px; }
+  .side-panel { gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== SPLASH SCREEN ========== -->
+<div id="splash-screen">
+  <div class="splash-bg-shapes" id="splash-bg-shapes"></div>
+  <div class="splash-stars" id="splash-stars"></div>
+  <div class="splash-mascot">🌟</div>
+  <div class="splash-title">The Self-Esteem<br>Game</div>
+  <div class="splash-subtitle">An Interactive Family Adventure!</div>
+  <div class="splash-tagline">Draw cards, read affirmations aloud, move along the board, and build confidence together!</div>
+  <button class="splash-play-btn" onclick="showSetup()">Let's Play!</button>
+  <div class="splash-cards-preview">
+    <div class="splash-card-mini" style="background:var(--within-light);">💜</div>
+    <div class="splash-card-mini" style="background:var(--friends-light);">💙</div>
+    <div class="splash-card-mini" style="background:var(--family-light);">🧡</div>
+    <div class="splash-card-mini" style="background:var(--general-light);">💚</div>
+  </div>
+</div>
+
+<!-- ========== SETUP SCREEN ========== -->
+<div id="setup-screen">
+  <div class="setup-box">
+    <div style="font-size:56px; text-align:center; margin-bottom:10px;">👨‍👩‍👧‍👦</div>
+    <div class="setup-title">Who's Playing?</div>
+    <div class="setup-sub">Add 2-6 players. Tap the emoji to change your avatar!</div>
+    <div id="player-list"></div>
+    <button class="add-player-btn" id="add-player-btn" onclick="addPlayerSlot()">+ Add Player</button>
+    <div class="setup-rules">
+      <h3>How to Play 🎯</h3>
+      <ul>
+        <li><strong>Roll the dice</strong> to land on a category space</li>
+        <li><strong>Draw a card</strong> — it's an affirmation or a setback</li>
+        <li><strong>Read it aloud</strong> together as a family!</li>
+        <li><strong>Affirmations</strong> move you forward 💚</li>
+        <li><strong>Setbacks</strong> move you back — but that's okay! 💛</li>
+        <li><strong>First to the finish</strong> wins — but everyone's a star! ⭐</li>
+      </ul>
+    </div>
+    <button class="start-game-btn" onclick="startGame()">Start Adventure! 🚀</button>
+  </div>
+</div>
+
+<!-- ========== MAIN GAME SCREEN ========== -->
+<div id="game-screen">
+  <div class="game-header">
+    <div class="game-logo">🌟 Self-Esteem Game</div>
+    <div class="turn-indicator" id="turn-indicator">
+      <span id="turn-avatar"></span>
+      <span id="turn-name"></span>'s Turn!
+    </div>
+    <div class="header-btns">
+      <button class="header-btn" onclick="toggleSound()" id="sound-btn" title="Toggle sound">🔊</button>
+      <button class="header-btn" onclick="showRules()" title="How to play">❓</button>
+    </div>
+  </div>
+
+  <div class="scoreboard" id="scoreboard"></div>
+
+  <div class="game-area">
+    <div class="board-container" id="board-container">
+      <div class="board-path" id="board"></div>
+    </div>
+
+    <div class="side-panel">
+      <div class="dice-area">
+        <div class="dice-label">Roll the Dice!</div>
+        <div class="dice-container">
+          <div class="dice" id="dice" onclick="rollDice()">🎲</div>
+        </div>
+        <button class="roll-btn" id="roll-btn" onclick="rollDice()">Roll! 🎲</button>
+      </div>
+
+      <div class="card-area" id="card-area">
+        <div class="card-area-title">Card Drawn</div>
+        <div class="card-display" id="card-display" style="background:#f8f9fa;">
+          <div class="card-icon">🎯</div>
+          <div class="card-text card-placeholder">Roll the dice to land on a space and draw a card!</div>
+        </div>
+      </div>
+
+      <div class="move-log" id="move-log">
+        <div class="move-log-title">Game Log</div>
+        <div id="log-entries">
+          <div class="log-entry" style="color:var(--text-light); font-style:italic;">Game started! Good luck everyone!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== WIN SCREEN ========== -->
+<div id="win-screen">
+  <div class="win-trophy">🏆</div>
+  <div class="win-title" id="win-title">Amazing!</div>
+  <div class="win-subtitle" id="win-subtitle">What an incredible adventure!</div>
+  <div class="win-message">Every player is a star! Remember: your self-esteem grows every time you say kind things to yourself and others. Keep shining bright!</div>
+  <div class="win-scores" id="win-scores"></div>
+  <button class="play-again-btn" onclick="playAgain()">Play Again! 🌟</button>
+</div>
+
+<!-- ========== RULES MODAL ========== -->
+<div id="rules-modal" style="display:none; position:fixed; inset:0; z-index:500; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px;">
+  <div style="background:white; border-radius:24px; padding:36px; max-width:480px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:slideIn 0.4s ease;">
+    <h2 style="text-align:center; margin-bottom:16px;">How to Play 🎯</h2>
+    <div style="font-size:14px; line-height:1.8; color:var(--text-light);">
+      <p><strong>1.</strong> Roll the dice to move along the board</p>
+      <p><strong>2.</strong> You'll land on a category space — draw a card!</p>
+      <p><strong>3. Read the card aloud</strong> together as a family</p>
+      <p><strong>4.</strong> <span style="color:#2E7D32; font-weight:700;">Affirmation cards</span> move you forward extra spaces</p>
+      <p><strong>5.</strong> <span style="color:#C62828; font-weight:700;">Setback cards</span> move you back — but it's a learning moment!</p>
+      <p><strong>6.</strong> ⭐ Star spaces are always a bonus!</p>
+      <p><strong>7.</strong> First player to reach the finish wins!</p>
+      <p style="margin-top:12px; font-style:italic;">Remember: everyone wins by growing their self-esteem! 💖</p>
+    </div>
+    <button onclick="hideRules()" style="display:block; margin:20px auto 0; padding:12px 36px; background:var(--purple); color:white; border:none; border-radius:50px; font-size:16px; font-weight:700; cursor:pointer;">Got it! ✨</button>
+  </div>
+</div>
+
+<script>
+// ========== CARD DATA (from the actual Self-Esteem Game) ==========
+const CARD_DATA = {
+  within: {
+    name: "Within Myself",
+    icon: "💜",
+    color: "var(--within)",
+    bgColor: "var(--within-bg)",
+    affirmations: [
+      { text: "Improving my self-esteem is an on-going goal in my life", move: 4 },
+      { text: "I deserve to feel good about myself", move: 4 },
+      { text: "I have the power to make myself feel good", move: 4 },
+      { text: "I have the ability to make myself feel good", move: 4 },
+      { text: "In my fantasies I rehearse success, not failure", move: 1 },
+      { text: "I nurture my self-confidence growing inside me", move: 3 },
+      { text: "I like to dream wonderful dreams", move: 2 },
+      { text: "I accept myself even when I make unwise choices", move: 2 },
+      { text: "I am my own best friend", move: 4 },
+      { text: "I feel warm and friendly towards myself", move: 4 },
+      { text: "I control my feelings \u2013 they don't control me", move: 4 },
+      { text: "I like being me", move: 3 },
+      { text: "I have the courage to conquer my fears", move: 1 },
+      { text: "I can be tough when I have to be", move: 1 },
+      { text: "I can laugh at myself in a healthy way", move: 2 },
+      { text: "I willingly accept what is", move: 4 },
+      { text: "I give myself permission to be wrong", move: 2 },
+      { text: "My word is very important to me", move: 3 },
+      { text: "I value mistakes and learn from them rather than get down on myself", move: 3 },
+      { text: "I have fun being me", move: 2 },
+      { text: "I'm at peace within myself", move: 3 },
+      { text: "There will never be anyone else quite like me", move: 2 },
+      { text: "I'll always know that I am a good person", move: 2 },
+      { text: "If I'm okay with me, I'm okay", move: 1 },
+      { text: "I like to dream", move: 1 },
+      { text: "I enjoy my time alone", move: 2 },
+      { text: "I like being able to take care of myself", move: 2 },
+      { text: "It feels good to work for things and earn my way", move: 2 },
+      { text: "I know that I'm important", move: 3 },
+      { text: "I know that I have a special reason and purpose to be alive", move: 4 },
+      { text: "I feel like there is a hero inside me", move: 3 },
+      { text: "I don't need to be the \"best\" to feel great about myself", move: 4 },
+      { text: "I don't judge others", move: 4 },
+      { text: "I have learned to fearlessly be myself", move: 2 },
+      { text: "I accept my own authority over my life", move: 3 },
+      { text: "I recover from hurt feelings quickly", move: 3 },
+      { text: "I know that I am not bad for my thoughts and feelings", move: 3 },
+      { text: "I really do have worth", move: 4 },
+      { text: "I am loveable and capable", move: 4 },
+      { text: "I believe in myself", move: 4 },
+      { text: "I stay very loving", move: 4 },
+      { text: "I am not a victim", move: 3 },
+      { text: "I think for myself", move: 4 },
+      { text: "I am ever growing in wisdom and love", move: 4 },
+      { text: "I choose to care about myself", move: 4 },
+      { text: "I'm special just because I'm me", move: 3 },
+      { text: "I am true to myself", move: 2 },
+      { text: "I know I'm a good person", move: 2 },
+      { text: "I accept myself as I am", move: 2 },
+      { text: "I have self-discipline when I need it", move: 2 },
+      { text: "I am patient, kind, and gentle with myself", move: 3 },
+    ],
+    setbacks: [
+      { text: "You attack yourself with put-downs", move: 3 },
+      { text: "You tell yourself that you hate yourself", move: 4 },
+      { text: "You think you are a terrible person because of your \"bad\" thoughts", move: 3 },
+      { text: "You feel like a coward because you experience fear", move: 2 },
+      { text: "You won't forgive yourself", move: 2 },
+      { text: "You are filled with self-doubt", move: 4 },
+      { text: "You think winning is your worth", move: 4 },
+      { text: "Your jealousy makes you mean-spirited", move: 4 },
+      { text: "You think gloomy so you feel gloomy", move: 3 },
+      { text: "You take pleasure in hurting others", move: 5 },
+    ]
+  },
+  friends: {
+    name: "With My Friends",
+    icon: "💙",
+    color: "var(--friends)",
+    bgColor: "var(--friends-bg)",
+    affirmations: [
+      { text: "I do not allow personal comparisons with friends to affect my self-esteem", move: 4 },
+      { text: "I'm good at giving and accepting compliments", move: 2 },
+    ],
+    setbacks: [
+      { text: "You compare yourself to others and put yourself down", move: 4 },
+      { text: "Your jealousy causes you hard feelings", move: 4 },
+      { text: "You take compliments as if people are just being nice and don't really mean it", move: 3 },
+      { text: "You think you are better than everyone else", move: 2 },
+    ]
+  },
+  family: {
+    name: "With My Family",
+    icon: "🧡",
+    color: "var(--family)",
+    bgColor: "var(--family-bg)",
+    affirmations: [],
+    setbacks: [
+      { text: "When others put you down, you believe them", move: 4 },
+    ]
+  },
+  general: {
+    name: "In General",
+    icon: "💚",
+    color: "var(--general)",
+    bgColor: "var(--general-bg)",
+    affirmations: [
+      { text: "If I'm okay with me, I'm okay", move: 3 },
+    ],
+    setbacks: [
+      { text: "You are overly self-critical", move: 3 },
+      { text: "You are filled with self-blame", move: 4 },
+      { text: "You exaggerate to make yourself look better", move: 3 },
+      { text: "You defend your mistakes", move: 3 },
+      { text: "You are filled with self-rejection", move: 3 },
+      { text: "You think you're too good for other people", move: 2 },
+    ]
+  }
+};
+
+// ========== BOARD CONFIG ==========
+const TOTAL_SPACES = 40;
+const WIN_SPACE = TOTAL_SPACES - 1;
+const AVATARS = ['\u{1F981}','\u{1F431}','\u{1F436}','\u{1F98A}','\u{1F43C}','\u{1F428}','\u{1F984}','\u{1F438}','\u{1F430}','\u{1F43B}','\u{1F42F}','\u{1F98B}','\u{1F419}','\u{1F433}','\u{1FA69}','\u{1F432}'];
+
+// Build the board spaces
+const CATEGORIES = ['within', 'friends', 'family', 'general'];
+function buildSpaceTypes() {
+  const spaces = ['start'];
+  for (let i = 1; i < TOTAL_SPACES - 1; i++) {
+    if (i % 8 === 0) {
+      spaces.push('star'); // bonus star every 8 spaces
+    } else {
+      // Weighted: more 'within' since it has more cards
+      const weights = [
+        { cat: 'within', w: 5 },
+        { cat: 'friends', w: 2 },
+        { cat: 'family', w: 1 },
+        { cat: 'general', w: 2 },
+      ];
+      const total = weights.reduce((s, w) => s + w.w, 0);
+      let r = Math.random() * total;
+      let chosen = 'within';
+      for (const w of weights) {
+        r -= w.w;
+        if (r <= 0) { chosen = w.cat; break; }
+      }
+      spaces.push(chosen);
+    }
+  }
+  spaces.push('finish');
+  return spaces;
+}
+
+const SPACE_TYPES = buildSpaceTypes();
+
+const SPACE_CONFIG = {
+  start:   { icon: '🏠', label: 'Start',    cssClass: 'space-start' },
+  within:  { icon: '💜', label: 'Within',   cssClass: 'space-within' },
+  friends: { icon: '💙', label: 'Friends',  cssClass: 'space-friends' },
+  family:  { icon: '🧡', label: 'Family',   cssClass: 'space-family' },
+  general: { icon: '💚', label: 'General',  cssClass: 'space-general' },
+  star:    { icon: '⭐', label: 'Bonus!',   cssClass: 'space-star' },
+  finish:  { icon: '🏆', label: 'Finish!',  cssClass: 'space-finish' },
+};
+
+// Affirmation encouragement after reading aloud
+const AFFIRMATION_PRAISE = [
+  "Beautiful! Say it like you mean it! 💖",
+  "Yes! That's the truth! 🌟",
+  "You ARE amazing! ✨",
+  "What a powerful thought! 💪",
+  "Remember this always! 🌈",
+  "Let that sink in! 💝",
+  "Wonderful! Believe it! 🦋",
+  "That's your superpower! ⚡",
+];
+
+const SETBACK_COMFORT = [
+  "It's okay \u2014 we all have tough moments. You'll bounce back! 💛",
+  "Everyone stumbles sometimes. You're still wonderful! 🌻",
+  "This is just a bump in the road. Keep going! 🌈",
+  "Remember: setbacks help us learn and grow! 🌱",
+  "You're stronger than any setback! 💪",
+];
+
+// ========== GAME STATE ==========
+let players = [];
+let currentPlayerIndex = 0;
+let gameStarted = false;
+let soundEnabled = true;
+let isRolling = false;
+let isMoving = false;
+let gameLog = [];
+let usedCards = { within: { a: [], s: [] }, friends: { a: [], s: [] }, family: { a: [], s: [] }, general: { a: [], s: [] } };
+
+// ========== AUDIO ==========
+let audioCtx;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freq, duration, type = 'sine', volume = 0.12) {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type; osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(volume, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+function playDiceSound() { playTone(200,0.1,'square',0.08); setTimeout(()=>playTone(250,0.1,'square',0.08),80); setTimeout(()=>playTone(300,0.1,'square',0.08),160); }
+function playMoveSound() { playTone(523,0.12,'sine',0.1); }
+function playCardSound() { playTone(659,0.2,'sine',0.12); setTimeout(()=>playTone(784,0.3,'sine',0.1),150); }
+function playStarSound() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,0.3,'sine',0.1),i*120)); }
+function playSetbackSound() { playTone(330,0.3,'sawtooth',0.08); setTimeout(()=>playTone(260,0.4,'sawtooth',0.06),200); }
+function playWinSound() { [523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>playTone(f,0.4,'sine',0.12),i*200)); }
+
+// ========== SPLASH INIT ==========
+(function initSplash() {
+  const stars = document.getElementById('splash-stars');
+  for (let i = 0; i < 18; i++) {
+    const s = document.createElement('div'); s.className = 'splash-star';
+    s.textContent = ['\u2B50','\u2728','\uD83C\uDF1F','\uD83D\uDCAB'][Math.floor(Math.random()*4)];
+    s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
+    s.style.animationDelay = Math.random()*3+'s'; s.style.fontSize = (16+Math.random()*18)+'px';
+    stars.appendChild(s);
+  }
+  const shapes = document.getElementById('splash-bg-shapes');
+  for (let i = 0; i < 5; i++) {
+    const sh = document.createElement('div'); sh.className = 'splash-shape';
+    const size = 100 + Math.random()*300;
+    sh.style.width = size+'px'; sh.style.height = size+'px';
+    sh.style.left = Math.random()*100+'%'; sh.style.top = Math.random()*100+'%';
+    shapes.appendChild(sh);
+  }
+})();
+
+function showSetup() {
+  document.getElementById('splash-screen').classList.add('hidden');
+  setTimeout(() => {
+    document.getElementById('setup-screen').classList.add('visible');
+    addPlayerSlot(); addPlayerSlot();
+  }, 600);
+}
+
+// ========== SETUP ==========
+let playerSlots = [];
+function addPlayerSlot() {
+  if (playerSlots.length >= 6) return;
+  const idx = playerSlots.length;
+  playerSlots.push({ avatarIdx: idx % AVATARS.length, name: '' });
+  renderPlayerSlots();
+  if (playerSlots.length >= 6) document.getElementById('add-player-btn').style.display = 'none';
+}
+function removePlayerSlot(idx) {
+  if (playerSlots.length <= 2) return;
+  playerSlots.splice(idx, 1); renderPlayerSlots();
+  document.getElementById('add-player-btn').style.display = '';
+}
+function cycleAvatar(idx) {
+  playerSlots[idx].avatarIdx = (playerSlots[idx].avatarIdx + 1) % AVATARS.length;
+  renderPlayerSlots();
+}
+function renderPlayerSlots() {
+  document.getElementById('player-list').innerHTML = playerSlots.map((s, i) => `
+    <div class="player-input-row">
+      <div class="player-avatar-select" onclick="cycleAvatar(${i})" title="Click to change!">${AVATARS[s.avatarIdx]}</div>
+      <input class="player-name-input" type="text" placeholder="Player ${i+1} name"
+             value="${s.name}" oninput="playerSlots[${i}].name=this.value" maxlength="16">
+      ${playerSlots.length > 2 ? `<button class="remove-player-btn" onclick="removePlayerSlot(${i})">\u2715</button>` : ''}
+    </div>
+  `).join('');
+}
+
+// ========== START GAME ==========
+function startGame() {
+  players = playerSlots.map((s, i) => ({
+    name: s.name.trim() || `Player ${i+1}`,
+    avatar: AVATARS[s.avatarIdx],
+    position: 0, stars: 0, affirmationsRead: 0
+  }));
+  // Reset used cards
+  for (const cat of CATEGORIES) usedCards[cat] = { a: [], s: [] };
+  gameLog = [];
+
+  document.getElementById('setup-screen').classList.remove('visible');
+  document.getElementById('game-screen').classList.add('visible');
+  gameStarted = true; currentPlayerIndex = 0; isRolling = false; isMoving = false;
+
+  buildBoard();
+  renderScoreboard();
+  updateTurnIndicator();
+  placeTokens();
+  addLogEntry(null, "Game started! Roll the dice! \uD83C\uDFB2");
+}
+
+// ========== BOARD ==========
+function buildBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  for (let i = 0; i < TOTAL_SPACES; i++) {
+    const type = SPACE_TYPES[i];
+    const config = SPACE_CONFIG[type];
+    const space = document.createElement('div');
+    space.className = `board-space ${config.cssClass}`;
+    space.id = `space-${i}`;
+    space.innerHTML = `
+      <span class="space-num">${i}</span>
+      <span class="space-icon">${config.icon}</span>
+      <span class="space-label">${config.label}</span>
+    `;
+    board.appendChild(space);
+  }
+}
+
+// ========== TOKENS ==========
+function placeTokens() {
+  document.querySelectorAll('.player-token').forEach(t => t.remove());
+  players.forEach((p, i) => {
+    const token = document.createElement('div');
+    token.className = 'player-token'; token.id = `token-${i}`;
+    token.textContent = p.avatar;
+    document.getElementById('board').appendChild(token);
+    positionToken(i);
+  });
+}
+function positionToken(idx) {
+  const p = players[idx];
+  const space = document.getElementById(`space-${p.position}`);
+  const token = document.getElementById(`token-${idx}`);
+  if (!space || !token) return;
+  const board = document.getElementById('board');
+  const bR = board.getBoundingClientRect(); const sR = space.getBoundingClientRect();
+  const offs = [[-7,-7],[7,-7],[-7,7],[7,7],[0,-10],[0,10]];
+  const o = offs[idx] || [0,0];
+  token.style.left = (sR.left - bR.left + sR.width/2 - 10 + o[0]) + 'px';
+  token.style.top = (sR.top - bR.top + sR.height/2 - 10 + o[1]) + 'px';
+}
+
+// ========== SCOREBOARD ==========
+function renderScoreboard() {
+  document.getElementById('scoreboard').innerHTML = players.map((p, i) => `
+    <div class="score-card ${i === currentPlayerIndex ? 'active' : ''}" id="score-${i}">
+      <div class="score-avatar">${p.avatar}</div>
+      <div class="score-info">
+        <div class="score-name">${p.name}</div>
+        <div class="score-stars">${'\u2B50'.repeat(Math.min(p.stars, 20))} ${p.stars > 0 ? `(${p.stars})` : '(no stars yet)'}</div>
+        <div class="score-pos">Space ${p.position} / ${WIN_SPACE}</div>
+      </div>
+    </div>
+  `).join('');
+}
+function updateTurnIndicator() {
+  const p = players[currentPlayerIndex];
+  document.getElementById('turn-avatar').textContent = p.avatar;
+  document.getElementById('turn-name').textContent = p.name;
+}
+
+// ========== DICE ==========
+function rollDice() {
+  if (isRolling || isMoving || !gameStarted) return;
+  isRolling = true;
+  const dice = document.getElementById('dice');
+  const btn = document.getElementById('roll-btn');
+  btn.disabled = true;
+  dice.classList.add('rolling');
+  playDiceSound();
+
+  let count = 0;
+  const interval = setInterval(() => {
+    dice.textContent = Math.floor(Math.random() * 6) + 1;
+    count++;
+    if (count > 12) {
+      clearInterval(interval);
+      const result = Math.floor(Math.random() * 6) + 1;
+      dice.textContent = result;
+      dice.classList.remove('rolling');
+      const p = players[currentPlayerIndex];
+      addLogEntry(currentPlayerIndex, `rolled a ${result}`);
+      setTimeout(() => movePlayer(result, true), 400);
+    }
+  }, 70);
+}
+
+// ========== MOVE PLAYER ==========
+function movePlayer(steps, forward) {
+  isMoving = true;
+  const player = players[currentPlayerIndex];
+  const target = forward
+    ? Math.min(player.position + steps, WIN_SPACE)
+    : Math.max(player.position - steps, 0);
+
+  let current = player.position;
+  const dir = target > current ? 1 : target < current ? -1 : 0;
+
+  if (dir === 0) {
+    isMoving = false;
+    handleLanding();
+    return;
+  }
+
+  const moveStep = () => {
+    if ((dir > 0 && current < target) || (dir < 0 && current > target)) {
+      current += dir;
+      player.position = current;
+      positionToken(currentPlayerIndex);
+      playMoveSound();
+      renderScoreboard();
+      setTimeout(moveStep, 200);
+    } else {
+      isMoving = false;
+      setTimeout(handleLanding, 300);
+    }
+  };
+  moveStep();
+}
+
+// ========== CARD MOVEMENT (after drawing a card) ==========
+function applyCardMovement(steps, forward) {
+  isMoving = true;
+  const player = players[currentPlayerIndex];
+  const target = forward
+    ? Math.min(player.position + steps, WIN_SPACE)
+    : Math.max(player.position - steps, 0);
+
+  let current = player.position;
+  const dir = target > current ? 1 : target < current ? -1 : 0;
+
+  if (dir === 0) { isMoving = false; checkWinOrNextTurn(); return; }
+
+  if (!forward) {
+    document.getElementById('board-container').classList.add('shake');
+    setTimeout(() => document.getElementById('board-container').classList.remove('shake'), 500);
+  }
+
+  const moveStep = () => {
+    if ((dir > 0 && current < target) || (dir < 0 && current > target)) {
+      current += dir;
+      player.position = current;
+      positionToken(currentPlayerIndex);
+      playMoveSound();
+      renderScoreboard();
+      setTimeout(moveStep, 200);
+    } else {
+      isMoving = false;
+      checkWinOrNextTurn();
+    }
+  };
+  setTimeout(moveStep, 300);
+}
+
+function checkWinOrNextTurn() {
+  if (players[currentPlayerIndex].position >= WIN_SPACE) {
+    playerWins();
+  } else {
+    setTimeout(nextTurn, 600);
+  }
+}
+
+// ========== HANDLE LANDING ==========
+function handleLanding() {
+  const player = players[currentPlayerIndex];
+  const type = SPACE_TYPES[player.position];
+
+  if (player.position >= WIN_SPACE) {
+    playerWins();
+    return;
+  }
+
+  if (type === 'star') {
+    handleStarSpace();
+  } else if (CATEGORIES.includes(type)) {
+    drawCard(type);
+  } else {
+    nextTurn();
+  }
+}
+
+// ========== DRAW CARD ==========
+function drawCard(category) {
+  playCardSound();
+  const data = CARD_DATA[category];
+
+  // Decide: ~75% affirmation, ~25% setback (unless category has no setbacks)
+  const hasSetbacks = data.setbacks.length > 0;
+  const hasAffirmations = data.affirmations.length > 0;
+  let isAffirmation;
+
+  if (!hasSetbacks && !hasAffirmations) { nextTurn(); return; }
+  if (!hasSetbacks) isAffirmation = true;
+  else if (!hasAffirmations) isAffirmation = false;
+  else isAffirmation = Math.random() < 0.72;
+
+  const pool = isAffirmation ? data.affirmations : data.setbacks;
+  const usedKey = isAffirmation ? 'a' : 's';
+
+  // Avoid repeats
+  let available = pool.filter((_, i) => !usedCards[category][usedKey].includes(i));
+  if (available.length === 0) {
+    usedCards[category][usedKey] = [];
+    available = pool;
+  }
+  const cardIdx = pool.indexOf(available[Math.floor(Math.random() * available.length)]);
+  usedCards[category][usedKey].push(cardIdx);
+  const card = pool[cardIdx];
+
+  showCardDisplay(card, category, isAffirmation, data);
+}
+
+function showCardDisplay(card, category, isAffirmation, data) {
+  const display = document.getElementById('card-display');
+  const bgColor = isAffirmation ? data.bgColor : 'var(--setback-bg)';
+  const textColor = isAffirmation ? data.color : 'var(--setback)';
+
+  display.style.background = bgColor;
+  display.className = 'card-display flip-in';
+
+  const praise = isAffirmation
+    ? AFFIRMATION_PRAISE[Math.floor(Math.random() * AFFIRMATION_PRAISE.length)]
+    : SETBACK_COMFORT[Math.floor(Math.random() * SETBACK_COMFORT.length)];
+
+  const movementDir = isAffirmation ? 'ahead' : 'back';
+  const movementText = isAffirmation ? `Move Ahead ${card.move} \u2714` : `Move Back ${card.move} \u2718`;
+  const arrow = isAffirmation ? '\u2B06\uFE0F' : '\u2B07\uFE0F';
+
+  display.innerHTML = `
+    <span class="card-badge ${isAffirmation ? 'affirmation' : 'setback'}">${isAffirmation ? '\u2728 Affirmation' : '\u26A0\uFE0F Setback'}</span>
+    <div class="card-icon">${data.icon}</div>
+    <div class="card-text" style="color:${textColor}">"${card.text}"</div>
+    <div class="read-aloud-prompt" style="background:rgba(0,0,0,0.04); color:var(--text-light); border-radius:8px; padding:8px 12px; margin-top:8px; font-size:12px;">
+      \uD83D\uDD0A <strong>Read this aloud together!</strong>
+    </div>
+    <div class="card-movement ${movementDir}">${arrow} ${movementText}</div>
+    <div class="card-category-label">${data.name}</div>
+    <button class="card-read-btn" style="background:${isAffirmation ? 'var(--grass)' : 'var(--orange)'}"
+            onclick="onCardDone(${card.move}, ${isAffirmation})">
+      ${isAffirmation ? "I said it! Let's go! \uD83D\uDE80" : "I understand! Move on \uD83D\uDCAA"}
+    </button>
+  `;
+
+  // Log
+  const p = players[currentPlayerIndex];
+  if (isAffirmation) {
+    addLogEntry(currentPlayerIndex, `\u2728 "${card.text}" \u2014 Move ahead ${card.move}!`, 'log-ahead');
+  } else {
+    addLogEntry(currentPlayerIndex, `\u26A0\uFE0F "${card.text}" \u2014 Move back ${card.move}`, 'log-back');
+  }
+}
+
+function onCardDone(moveAmount, isAffirmation) {
+  const p = players[currentPlayerIndex];
+  if (isAffirmation) {
+    p.stars++;
+    p.affirmationsRead++;
+    playStarSound();
+    showCompliment();
+  } else {
+    playSetbackSound();
+  }
+  renderScoreboard();
+  applyCardMovement(moveAmount, isAffirmation);
+}
+
+// ========== STAR SPACE ==========
+function handleStarSpace() {
+  const p = players[currentPlayerIndex];
+  p.stars += 2;
+  playStarSound();
+  renderScoreboard();
+
+  const display = document.getElementById('card-display');
+  display.style.background = '#FFFDE7';
+  display.className = 'card-display flip-in';
+  display.innerHTML = `
+    <div class="card-icon" style="font-size:56px; animation: bounce 1s infinite;">\u2B50</div>
+    <div class="card-text" style="color:#F57F17; font-size:20px;">Bonus Star Space!</div>
+    <div style="color:#FF8F00; font-size:15px; margin-top:6px;">+2 Stars! You're amazing!</div>
+  `;
+
+  showCompliment();
+  spawnConfetti();
+  addLogEntry(currentPlayerIndex, "\u2B50 landed on Bonus Star! +2 stars!", 'log-ahead');
+  setTimeout(nextTurn, 2000);
+}
+
+// ========== NEXT TURN ==========
+function nextTurn() {
+  isRolling = false; isMoving = false;
+  document.getElementById('roll-btn').disabled = false;
+  currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+  renderScoreboard();
+  updateTurnIndicator();
+
+  const display = document.getElementById('card-display');
+  display.style.background = '#f8f9fa';
+  display.className = 'card-display flip-in';
+  display.innerHTML = `
+    <div class="card-icon">\uD83C\uDFAF</div>
+    <div class="card-text card-placeholder">${players[currentPlayerIndex].name}, roll the dice!</div>
+  `;
+}
+
+// ========== WIN ==========
+function playerWins() {
+  playWinSound(); spawnConfetti();
+  setTimeout(() => {
+    const winner = players[currentPlayerIndex];
+    document.getElementById('win-title').textContent = `${winner.name} Reached the Finish! \uD83C\uDF89`;
+    document.getElementById('win-subtitle').textContent = "But remember \u2014 everyone's a winner in the Self-Esteem Game!";
+
+    const sorted = [...players].sort((a, b) => b.stars - a.stars);
+    document.getElementById('win-scores').innerHTML = sorted.map((p, i) => `
+      <div class="win-score-card">
+        <div class="avatar">${p.avatar}</div>
+        <div class="name">${p.name}</div>
+        <div class="stars">${'\u2B50'.repeat(Math.min(p.stars, 15))} (${p.stars})</div>
+        <div style="font-size:12px; margin-top:4px; opacity:0.8;">${p.affirmationsRead} affirmations read!</div>
+        ${i === 0 ? '<div style="margin-top:4px;">\uD83D\uDC51 Most Stars!</div>' : ''}
+      </div>
+    `).join('');
+
+    document.getElementById('win-screen').classList.add('visible');
+    spawnConfetti();
+  }, 1000);
+}
+
+function playAgain() {
+  document.getElementById('win-screen').classList.remove('visible');
+  document.getElementById('game-screen').classList.remove('visible');
+  document.getElementById('setup-screen').classList.add('visible');
+  gameStarted = false; isRolling = false; isMoving = false;
+  playerSlots = players.map(p => ({ avatarIdx: AVATARS.indexOf(p.avatar), name: p.name }));
+  renderPlayerSlots();
+}
+
+// ========== LOG ==========
+function addLogEntry(playerIdx, text, className) {
+  const entries = document.getElementById('log-entries');
+  const entry = document.createElement('div');
+  entry.className = `log-entry ${className || ''}`;
+  const avatar = playerIdx !== null ? `<span class="log-avatar">${players[playerIdx].avatar}</span>` : '';
+  const name = playerIdx !== null ? `<strong>${players[playerIdx].name}</strong> ` : '';
+  entry.innerHTML = `${avatar} ${name}${text}`;
+  entries.prepend(entry);
+  // Keep max 20 entries
+  while (entries.children.length > 20) entries.removeChild(entries.lastChild);
+}
+
+// ========== COMPLIMENTS ==========
+function showCompliment() {
+  const msgs = ["\u2728 You're doing amazing!","\u2B50 What a superstar!","\uD83C\uDF89 Incredible!","\u2600\uFE0F Keep shining!",
+    "\uD83D\uDC8E One of a kind!","\uD83C\uDF08 Wonderful!","\uD83C\uDFB8 You rock!","\uD83D\uDCAA Believe in yourself!"];
+  const bubble = document.createElement('div');
+  bubble.className = 'compliment-bubble';
+  bubble.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+  bubble.style.left = (30 + Math.random() * 40) + '%';
+  bubble.style.top = (30 + Math.random() * 30) + '%';
+  document.body.appendChild(bubble);
+  setTimeout(() => bubble.remove(), 3000);
+}
+
+// ========== CONFETTI ==========
+function spawnConfetti() {
+  const colors = ['#FF6B6B','#FFD93D','#6BCB77','#4FC3F7','#9B59B6','#FF9F43','#FD79A8','#00B894'];
+  for (let i = 0; i < 35; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random()*100+'vw';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.width = (6+Math.random()*8)+'px'; p.style.height = (6+Math.random()*8)+'px';
+    p.style.borderRadius = Math.random()>0.5?'50%':'2px';
+    p.style.animationDelay = Math.random()*1+'s';
+    p.style.animationDuration = (2+Math.random()*2)+'s';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 5000);
+  }
+}
+
+// ========== SOUND & RULES ==========
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  document.getElementById('sound-btn').textContent = soundEnabled ? '\uD83D\uDD0A' : '\uD83D\uDD07';
+}
+function showRules() { document.getElementById('rules-modal').style.display = 'flex'; }
+function hideRules() { document.getElementById('rules-modal').style.display = 'none'; }
+document.getElementById('rules-modal').addEventListener('click', function(e) { if (e.target === this) hideRules(); });
+
+// ========== RESIZE ==========
+window.addEventListener('resize', () => { if (gameStarted) players.forEach((_, i) => positionToken(i)); });
+</script>
+</body>
+</html>
