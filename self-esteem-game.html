@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Self-Esteem Game - Interactive Family Adventure!</title>
+<title>The Self-Esteem Game - Journey to Self-Esteem City!</title>
 <style>
-/* ========== RESET & BASE ========== */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
@@ -19,22 +18,21 @@ html { scroll-behavior: smooth; }
   --pink: #FD79A8;
   --mint: #00B894;
   --bg: #FFF8E7;
-  --board-bg: #F0F7FF;
+  --board-bg: #1a3a5c;
   --text: #2D3436;
   --text-light: #636E72;
   --shadow: rgba(0,0,0,0.1);
 
-  /* Category colors */
-  --within: #9B59B6;
-  --within-bg: #F3E5F5;
-  --within-light: #E1BEE7;
-  --friends: #4FC3F7;
-  --friends-bg: #E1F5FE;
-  --friends-light: #B3E5FC;
-  --family: #FF9F43;
-  --family-bg: #FFF3E0;
-  --family-light: #FFE0B2;
-  --general: #6BCB77;
+  --within: #E57373;
+  --within-bg: #FFEBEE;
+  --within-light: #FFCDD2;
+  --friends: #64B5F6;
+  --friends-bg: #E3F2FD;
+  --friends-light: #BBDEFB;
+  --family: #FFD54F;
+  --family-bg: #FFF8E1;
+  --family-light: #FFECB3;
+  --general: #81C784;
   --general-bg: #E8F5E9;
   --general-light: #C8E6C9;
   --setback: #FF6B6B;
@@ -43,360 +41,297 @@ html { scroll-behavior: smooth; }
 }
 
 body {
-  font-family: 'Segoe UI', 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+  font-family: 'Segoe UI', 'Comic Sans MS', sans-serif;
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden;
   min-height: 100vh;
 }
 
-/* ========== ANIMATIONS ========== */
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 @keyframes bounce { 0%,100% { transform: translateY(0); } 40% { transform: translateY(-20px); } 60% { transform: translateY(-10px); } }
-@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-@keyframes slideInCard { from { opacity: 0; transform: rotateY(90deg) scale(0.8); } to { opacity: 1; transform: rotateY(0) scale(1); } }
-@keyframes confetti-fall { 0% { transform: translateY(-100%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
-@keyframes wiggle { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
-@keyframes sparkle { 0%,100% { opacity: 0; transform: scale(0); } 50% { opacity: 1; transform: scale(1); } }
-@keyframes glow { 0%,100% { box-shadow: 0 0 5px var(--sun); } 50% { box-shadow: 0 0 25px var(--sun), 0 0 50px var(--orange); } }
-@keyframes dice-roll { 0% { transform: rotateX(0) rotateY(0); } 25% { transform: rotateX(90deg) rotateY(90deg); } 50% { transform: rotateX(180deg) rotateY(180deg); } 75% { transform: rotateX(270deg) rotateY(90deg); } 100% { transform: rotateX(360deg) rotateY(360deg); } }
-@keyframes moveForward { 0% { color: var(--grass); transform: scale(1); } 50% { color: var(--grass); transform: scale(1.3); } 100% { color: var(--grass); transform: scale(1); } }
-@keyframes moveBack { 0% { color: var(--heart); transform: scale(1); } 50% { color: var(--heart); transform: scale(1.3); } 100% { color: var(--heart); transform: scale(1); } }
-@keyframes shakeHead { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
-@keyframes heroFloat { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
+@keyframes slideIn { from { transform: translateY(40px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+@keyframes shakeHead { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+@keyframes confetti-fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity:1; } 100% { transform: translateY(110vh) rotate(720deg); opacity:0; } }
+@keyframes glow { 0%,100% { box-shadow: 0 0 5px rgba(255,215,0,0.3); } 50% { box-shadow: 0 0 20px rgba(255,215,0,0.6); } }
+@keyframes spinnerSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(var(--spin-degrees)); } }
 
-/* ========== SPLASH / TITLE SCREEN ========== */
+/* Splash */
 #splash-screen {
-  position: fixed; inset: 0; z-index: 1000;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: fixed; inset: 0; z-index: 100;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: opacity 0.8s ease, transform 0.8s ease;
-  overflow: hidden;
+  transition: opacity 0.6s, transform 0.6s;
 }
 #splash-screen.hidden { opacity: 0; transform: scale(1.1); pointer-events: none; }
-
-.splash-bg-shapes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.splash-shape {
-  position: absolute; border-radius: 50%; opacity: 0.08;
-  background: white;
-}
-
-.splash-stars { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.splash-star {
-  position: absolute; font-size: 24px;
-  animation: sparkle 2s ease-in-out infinite;
-}
-
-.splash-mascot {
-  font-size: 100px; margin-bottom: 20px;
-  animation: heroFloat 4s ease-in-out infinite;
-  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
-}
-.splash-title {
-  font-size: clamp(38px, 8vw, 72px); font-weight: 900;
-  color: white; text-align: center;
-  text-shadow: 3px 3px 0 rgba(0,0,0,0.2);
-  margin-bottom: 8px; line-height: 1.1;
-}
-.splash-subtitle {
-  font-size: clamp(16px, 3vw, 24px); color: rgba(255,255,255,0.85);
-  text-align: center; margin-bottom: 12px; font-weight: 400;
-}
-.splash-tagline {
-  font-size: 14px; color: rgba(255,255,255,0.55);
-  text-align: center; margin-bottom: 40px; max-width: 400px; line-height: 1.5;
-}
+.splash-mascot { font-size: 80px; animation: bounce 2s infinite; }
+.splash-title { font-size: 52px; font-weight: 900; color: white; text-align: center; text-shadow: 3px 3px 0 rgba(0,0,0,0.2); line-height: 1.1; margin: 16px 0 8px; }
+.splash-subtitle { font-size: 20px; color: rgba(255,255,255,0.9); font-weight: 600; }
+.splash-tagline { font-size: 14px; color: rgba(255,255,255,0.7); max-width: 400px; text-align: center; margin: 12px 0 28px; line-height: 1.5; }
 .splash-play-btn {
-  background: var(--sun); color: var(--text); border: none;
-  font-size: 22px; font-weight: 800; padding: 18px 56px;
-  border-radius: 50px; cursor: pointer;
-  box-shadow: 0 6px 0 #E6B800, 0 10px 30px rgba(0,0,0,0.2);
-  transition: all 0.15s; text-transform: uppercase; letter-spacing: 2px;
+  background: var(--sun); color: var(--text); border: none; padding: 18px 52px;
+  border-radius: 50px; font-size: 22px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 6px 0 #E6B800; transition: all 0.15s; text-transform: uppercase;
 }
-.splash-play-btn:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #E6B800, 0 15px 40px rgba(0,0,0,0.25); }
-.splash-play-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #E6B800, 0 5px 15px rgba(0,0,0,0.2); }
+.splash-play-btn:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #E6B800; }
+.splash-play-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #E6B800; }
+.splash-stars { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.splash-star { position: absolute; animation: float 3s ease-in-out infinite; }
+.splash-bg-shapes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.splash-shape { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.06); }
+.splash-cards-preview { display: flex; gap: 10px; margin-top: 24px; }
+.splash-card-mini { width: 50px; height: 65px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 3px 8px rgba(0,0,0,0.15); }
 
-.splash-cards-preview {
-  display: flex; gap: 16px; margin-top: 40px; opacity: 0.7;
-}
-.splash-card-mini {
-  width: 60px; height: 80px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  animation: float 3s ease-in-out infinite;
-}
-.splash-card-mini:nth-child(2) { animation-delay: 0.5s; }
-.splash-card-mini:nth-child(3) { animation-delay: 1s; }
-.splash-card-mini:nth-child(4) { animation-delay: 1.5s; }
-
-/* ========== PLAYER SETUP SCREEN ========== */
+/* Setup */
 #setup-screen {
-  display: none; position: fixed; inset: 0; z-index: 900;
-  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-  flex-direction: column; align-items: center; justify-content: center;
-  padding: 30px; overflow-y: auto;
+  position: fixed; inset: 0; z-index: 90;
+  background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity 0.5s;
 }
-#setup-screen.visible { display: flex; }
-
-.setup-box {
-  background: white; border-radius: 24px; padding: 36px 44px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-  max-width: 560px; width: 100%; animation: slideIn 0.5s ease;
-}
-.setup-title { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 6px; color: var(--purple); }
-.setup-sub { text-align: center; color: var(--text-light); margin-bottom: 24px; font-size: 15px; }
-
-.player-input-row {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
-  background: #f8f9fa; border-radius: 12px; padding: 10px 14px;
-}
-.player-avatar-select {
-  font-size: 34px; cursor: pointer; transition: transform 0.2s;
-  user-select: none; min-width: 42px; text-align: center;
-}
+#setup-screen.visible { opacity: 1; pointer-events: auto; }
+.setup-box { background: white; border-radius: 28px; padding: 36px; max-width: 520px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.1); animation: slideIn 0.5s ease; max-height: 90vh; overflow-y: auto; }
+.setup-title { text-align: center; font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+.setup-sub { text-align: center; color: var(--text-light); margin-bottom: 20px; font-size: 14px; }
+.player-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.player-avatar-select { font-size: 36px; cursor: pointer; transition: transform 0.2s; user-select: none; }
 .player-avatar-select:hover { transform: scale(1.2); }
-.player-name-input {
-  flex: 1; border: 2px solid #e0e0e0; border-radius: 10px;
-  padding: 10px 14px; font-size: 17px; font-weight: 600;
-  outline: none; transition: border-color 0.2s; font-family: inherit;
-}
-.player-name-input:focus { border-color: var(--purple); }
-.player-name-input::placeholder { color: #ccc; }
-.remove-player-btn {
-  background: var(--heart); color: white; border: none;
-  width: 30px; height: 30px; border-radius: 50%;
-  font-size: 16px; cursor: pointer; display: flex;
-  align-items: center; justify-content: center; transition: transform 0.2s;
-}
-.remove-player-btn:hover { transform: scale(1.1); }
+.player-name-input { flex: 1; padding: 10px 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; transition: border-color 0.2s; }
+.player-name-input:focus { border-color: var(--purple); outline: none; }
+.remove-player-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #bbb; padding: 4px 8px; }
+.remove-player-btn:hover { color: var(--heart); }
+.add-player-btn { display: block; width: 100%; padding: 12px; background: #f5f5f5; border: 2px dashed #ccc; border-radius: 12px; font-size: 16px; cursor: pointer; margin: 10px 0 20px; color: var(--text-light); transition: all 0.2s; }
+.add-player-btn:hover { background: #e8e8e8; border-color: #999; }
+.setup-rules { background: #f8f9fa; border-radius: 16px; padding: 18px; margin-bottom: 20px; }
+.setup-rules h3 { margin-bottom: 10px; font-size: 16px; }
+.setup-rules ul { list-style: none; font-size: 14px; color: var(--text-light); line-height: 2; }
+.setup-rules li::before { content: ""; margin-right: 4px; }
+.start-game-btn { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg, var(--purple), #8E44AD); color: white; border: none; border-radius: 16px; font-size: 18px; font-weight: 800; cursor: pointer; transition: all 0.2s; }
+.start-game-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(155,89,182,0.4); }
 
-.add-player-btn {
-  width: 100%; padding: 12px; border: 3px dashed #ccc;
-  border-radius: 12px; background: transparent;
-  font-size: 15px; font-weight: 600; color: var(--text-light);
-  cursor: pointer; transition: all 0.2s; margin-bottom: 20px;
+/* Game screen */
+#game-screen {
+  display: none; min-height: 100vh;
+  background: linear-gradient(180deg, #E3F2FD 0%, #FFF8E7 100%);
 }
-.add-player-btn:hover { border-color: var(--purple); color: var(--purple); }
-
-.setup-rules {
-  background: #f8f9fa; border-radius: 14px; padding: 18px 22px;
-  margin-bottom: 20px; font-size: 13px; line-height: 1.7; color: var(--text-light);
-}
-.setup-rules h3 { font-size: 15px; color: var(--text); margin-bottom: 8px; }
-.setup-rules ul { padding-left: 20px; }
-
-.start-game-btn {
-  width: 100%; padding: 16px; background: var(--grass);
-  color: white; border: none; border-radius: 14px;
-  font-size: 19px; font-weight: 800; cursor: pointer;
-  box-shadow: 0 4px 0 #4CAF50;
-  transition: all 0.15s; text-transform: uppercase; letter-spacing: 1px;
-}
-.start-game-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #4CAF50; }
-.start-game-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #4CAF50; }
-
-/* ========== MAIN GAME ========== */
-#game-screen { display: none; min-height: 100vh; }
 #game-screen.visible { display: block; }
 
-/* Top bar */
 .game-header {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white; padding: 12px 20px;
   display: flex; align-items: center; justify-content: space-between;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 8px;
+  padding: 12px 20px; background: white; box-shadow: 0 2px 10px var(--shadow);
+  position: sticky; top: 0; z-index: 50;
 }
-.game-logo { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-.turn-indicator {
-  background: rgba(255,255,255,0.2); border-radius: 50px;
-  padding: 8px 18px; font-weight: 700; font-size: 15px;
-  display: flex; align-items: center; gap: 8px;
-}
-.header-btns { display: flex; gap: 8px; }
-.header-btn {
-  background: rgba(255,255,255,0.2); border: none; color: white;
-  width: 38px; height: 38px; border-radius: 50%;
-  font-size: 18px; cursor: pointer; transition: background 0.2s;
-}
-.header-btn:hover { background: rgba(255,255,255,0.35); }
+.game-logo { font-size: 18px; font-weight: 800; }
+.turn-indicator { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 16px; background: #f0f0f0; padding: 6px 16px; border-radius: 50px; }
+.header-btns { display: flex; gap: 6px; }
+.header-btn { background: #f0f0f0; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 16px; cursor: pointer; transition: background 0.2s; }
+.header-btn:hover { background: #e0e0e0; }
 
-/* Player scoreboard */
-.scoreboard {
-  display: flex; gap: 10px; padding: 14px 20px;
-  background: white; border-bottom: 3px solid #f0f0f0;
-  overflow-x: auto;
-}
-.score-card {
-  flex-shrink: 0; display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px; border-radius: 14px;
-  background: #f8f9fa; border: 3px solid transparent;
-  transition: all 0.3s; min-width: 150px;
-}
-.score-card.active { border-color: var(--sun); background: #FFFDE7; animation: glow 2s infinite; }
-.score-avatar { font-size: 30px; }
-.score-info { display: flex; flex-direction: column; }
+/* Scoreboard */
+.scoreboard { display: flex; gap: 8px; padding: 10px 16px; overflow-x: auto; background: rgba(255,255,255,0.7); }
+.score-card { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 14px; background: white; box-shadow: 0 2px 8px var(--shadow); transition: all 0.3s; min-width: 140px; border: 2px solid transparent; }
+.score-card.active { border-color: var(--purple); background: #faf0ff; }
+.score-avatar { font-size: 28px; }
+.score-info { font-size: 12px; }
 .score-name { font-weight: 700; font-size: 14px; }
-.score-stars { color: var(--sun); font-size: 12px; font-weight: 600; }
-.score-pos { font-size: 11px; color: var(--text-light); }
+.score-stars { color: var(--text-light); font-size: 11px; }
+.score-pos { color: var(--text-light); font-size: 11px; }
 
-/* Game area */
-.game-area {
-  display: grid; grid-template-columns: 1fr 360px;
-  gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto;
-}
+/* Main game area */
+.game-area { display: grid; grid-template-columns: 1fr 320px; gap: 16px; padding: 16px; max-width: 1200px; margin: 0 auto; }
 
 /* Board */
 .board-container {
-  background: var(--board-bg); border-radius: 24px;
-  padding: 24px; box-shadow: 0 8px 32px var(--shadow);
-  border: 3px solid #e3f2fd; position: relative; overflow: hidden;
+  background: var(--board-bg);
+  border-radius: 20px; padding: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  position: relative; overflow: hidden;
 }
-.board-container::before {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(circle at 20% 30%, rgba(135,206,235,0.12), transparent 50%),
-              radial-gradient(circle at 80% 70%, rgba(107,203,119,0.08), transparent 50%);
-  pointer-events: none;
+.board-container.shake { animation: shakeHead 0.5s ease; }
+
+.board-title-start {
+  text-align: center; color: white; font-size: 14px; font-weight: 700;
+  margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px;
+}
+.board-title-end {
+  text-align: center; color: var(--sun); font-size: 14px; font-weight: 700;
+  margin-top: 12px; text-transform: uppercase; letter-spacing: 2px;
 }
 
-.board-path {
-  display: grid; grid-template-columns: repeat(8, 1fr);
-  gap: 6px; position: relative;
+.board-row {
+  display: flex; gap: 4px; margin-bottom: 4px; justify-content: center;
 }
+.board-row.reverse { flex-direction: row-reverse; }
 
 .board-space {
-  aspect-ratio: 1; border-radius: 14px;
+  width: 56px; height: 56px; border-radius: 10px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; cursor: default;
-  position: relative; transition: all 0.3s;
-  border: 3px solid transparent; padding: 3px;
-  min-height: 65px;
+  font-size: 9px; font-weight: 600; position: relative;
+  transition: all 0.3s; cursor: default; border: 2px solid rgba(255,255,255,0.15);
+  background: #F5D742;
 }
-.board-space:hover { transform: scale(1.05); z-index: 5; }
-.board-space .space-num { font-size: 10px; font-weight: 800; opacity: 0.4; position: absolute; top: 3px; right: 6px; }
-.board-space .space-icon { font-size: 20px; margin-bottom: 1px; }
-.board-space .space-label { font-size: 8px; text-align: center; line-height: 1.2; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.board-space .space-num { position: absolute; top: 2px; left: 4px; font-size: 7px; opacity: 0.5; }
+.board-space .space-icon { font-size: 18px; line-height: 1; }
+.board-space .space-label { font-size: 7px; text-align: center; line-height: 1.1; margin-top: 1px; max-width: 50px; overflow: hidden; }
 
-.space-within { background: linear-gradient(135deg, #F3E5F5, #E1BEE7); border-color: #CE93D8; color: #6A1B9A; }
-.space-friends { background: linear-gradient(135deg, #E1F5FE, #B3E5FC); border-color: #81D4FA; color: #0277BD; }
-.space-family { background: linear-gradient(135deg, #FFF3E0, #FFE0B2); border-color: #FFB74D; color: #E65100; }
-.space-general { background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border-color: #A5D6A7; color: #2E7D32; }
-.space-star { background: linear-gradient(135deg, #FFF9C4, #FFF176); border-color: #FFD54F; color: #F57F17; animation: pulse 2s infinite; }
-.space-start { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-color: #5C6BC0; }
-.space-finish { background: linear-gradient(135deg, #FFD700, #FFA000); color: white; border-color: #FF8F00; animation: glow 3s infinite; }
+.space-start { background: #A5D6A7; border-color: #66BB6A; }
+.space-finish { background: #FFD54F; border-color: #FFC107; animation: glow 2s infinite; }
+.space-affirmation { background: #F5D742; border-color: #F0C929; }
+.space-highlight { background: #81D4FA; border-color: #4FC3F7; }
+
+.board-space.has-player { box-shadow: 0 0 12px rgba(255,255,255,0.6); }
 
 /* Player tokens on board */
 .player-token {
-  position: absolute; font-size: 18px;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 10; pointer-events: none;
+  position: absolute; font-size: 22px; z-index: 10;
+  transition: left 0.3s ease, top 0.3s ease;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+  pointer-events: none;
 }
 
-/* Right panel */
-.side-panel { display: flex; flex-direction: column; gap: 14px; }
+/* Side panel */
+.side-panel { display: flex; flex-direction: column; gap: 12px; }
 
-/* Dice */
+/* Dice area */
 .dice-area {
-  background: white; border-radius: 20px; padding: 20px;
-  box-shadow: 0 6px 24px var(--shadow); text-align: center;
+  background: white; border-radius: 18px; padding: 18px; text-align: center;
+  box-shadow: 0 3px 12px var(--shadow);
 }
-.dice-label { font-size: 13px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-.dice-container { width: 90px; height: 90px; margin: 12px auto; perspective: 300px; }
+.dice-label { font-weight: 700; margin-bottom: 10px; font-size: 16px; }
+.dice-container { display: flex; justify-content: center; margin-bottom: 12px; }
 .dice {
-  width: 90px; height: 90px; background: white;
-  border-radius: 14px; border: 4px solid var(--text);
+  width: 80px; height: 80px; border-radius: 16px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 42px; font-weight: 900;
-  box-shadow: 0 5px 0 #ddd, 0 8px 16px rgba(0,0,0,0.12);
-  cursor: pointer; transition: transform 0.1s; user-select: none;
+  font-size: 40px; cursor: pointer; user-select: none;
+  transition: transform 0.2s; border: 3px solid #ddd;
+  background: white;
 }
-.dice.rolling { animation: dice-roll 0.6s ease-in-out; }
-.dice:hover:not(.rolling) { transform: translateY(-3px); }
-
+.dice:hover { transform: scale(1.05); }
+.dice.rolling { animation: shakeHead 0.15s infinite; }
+.dice-category {
+  font-size: 14px; font-weight: 700; margin-top: 8px; padding: 6px 16px;
+  border-radius: 20px; display: inline-block;
+}
 .roll-btn {
-  background: var(--heart); color: white; border: none;
-  padding: 12px 36px; border-radius: 50px;
-  font-size: 17px; font-weight: 800; cursor: pointer;
-  box-shadow: 0 4px 0 #E53935;
-  transition: all 0.15s; text-transform: uppercase; letter-spacing: 1px;
-  margin-top: 6px;
+  background: linear-gradient(135deg, var(--purple), #8E44AD);
+  color: white; border: none; padding: 12px 36px; border-radius: 50px;
+  font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.2s;
 }
-.roll-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 #E53935; }
-.roll-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #E53935; }
-.roll-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.roll-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(155,89,182,0.4); }
+.roll-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-/* Card display */
+/* Card area */
 .card-area {
-  background: white; border-radius: 20px; padding: 20px;
-  box-shadow: 0 6px 24px var(--shadow);
-  display: flex; flex-direction: column;
+  background: white; border-radius: 18px; padding: 16px;
+  box-shadow: 0 3px 12px var(--shadow);
 }
-.card-area-title {
-  font-size: 14px; font-weight: 700; margin-bottom: 10px;
-  text-align: center; text-transform: uppercase; letter-spacing: 1px;
-  color: var(--text-light);
-}
-
+.card-area-title { font-weight: 700; font-size: 14px; margin-bottom: 10px; text-align: center; }
 .card-display {
-  border-radius: 16px; padding: 20px;
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; text-align: center;
-  min-height: 220px; position: relative;
-  perspective: 600px;
+  border-radius: 16px; padding: 18px; text-align: center;
+  min-height: 180px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  transition: background 0.3s;
 }
-.card-display.flip-in { animation: slideInCard 0.5s ease; }
-
-.card-badge {
-  display: inline-block; font-size: 10px; font-weight: 800;
-  text-transform: uppercase; letter-spacing: 1.5px;
-  padding: 4px 12px; border-radius: 50px; margin-bottom: 10px;
-}
-.card-badge.affirmation { background: rgba(107,203,119,0.2); color: #2E7D32; }
-.card-badge.setback { background: rgba(255,107,107,0.2); color: #C62828; }
-
-.card-icon { font-size: 44px; margin-bottom: 10px; }
-.card-text {
-  font-size: 17px; font-weight: 700; line-height: 1.5;
-  margin-bottom: 6px;
-}
-.card-movement {
-  font-size: 15px; font-weight: 800; margin: 8px 0 4px;
-  padding: 6px 18px; border-radius: 50px;
-  display: inline-flex; align-items: center; gap: 6px;
-}
-.card-movement.ahead { background: #E8F5E9; color: #2E7D32; animation: moveForward 1s ease; }
-.card-movement.back { background: #FFEBEE; color: #C62828; animation: moveBack 1s ease; }
-
-.card-category-label {
-  font-size: 11px; font-weight: 600; color: var(--text-light);
-  text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;
-}
-
+.card-display.flip-in { animation: slideIn 0.4s ease; }
+.card-badge { font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; }
+.card-badge.affirmation { background: #C8E6C9; color: #2E7D32; }
+.card-badge.setback { background: #FFCDD2; color: #C62828; }
+.card-icon { font-size: 36px; margin: 4px 0; }
+.card-text { font-size: 16px; font-weight: 700; line-height: 1.4; }
+.card-movement { font-size: 13px; font-weight: 700; margin-top: 6px; padding: 4px 12px; border-radius: 8px; }
+.card-movement.ahead { background: #E8F5E9; color: #2E7D32; }
+.card-movement.back { background: #FFEBEE; color: #C62828; }
+.card-category-label { font-size: 11px; color: var(--text-light); margin-top: 4px; }
 .card-read-btn {
-  margin-top: 12px; padding: 12px 32px; border: none;
-  border-radius: 50px; font-size: 15px; font-weight: 800;
-  cursor: pointer; color: white; transition: all 0.2s;
-  text-transform: uppercase; letter-spacing: 1px;
+  margin-top: 10px; padding: 10px 24px; border: none; border-radius: 50px;
+  color: white; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
 }
-.card-read-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+.card-read-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.card-placeholder { color: var(--text-light); font-weight: 400; font-size: 14px; }
 
-.card-placeholder { color: var(--text-light); }
+/* Category choice modal */
+#category-choice-modal {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+#category-choice-modal.visible { display: flex; }
+.category-choice-box {
+  background: white; border-radius: 24px; padding: 30px; max-width: 400px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideIn 0.4s ease; text-align: center;
+}
+.category-choice-box h2 { margin-bottom: 6px; }
+.category-choice-box p { color: var(--text-light); margin-bottom: 18px; font-size: 14px; }
+.category-btn {
+  display: block; width: 100%; padding: 14px; margin-bottom: 8px;
+  border: 2px solid #eee; border-radius: 14px; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; background: white;
+}
+.category-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow); }
 
-/* Movement log */
+/* Spinner overlay */
+#spinner-overlay {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+#spinner-overlay.visible { display: flex; }
+.spinner-box {
+  background: white; border-radius: 24px; padding: 30px; max-width: 440px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideIn 0.4s ease; text-align: center;
+}
+.spinner-box h2 { margin-bottom: 4px; font-size: 22px; }
+.spinner-box .spinner-subtitle { color: var(--text-light); margin-bottom: 16px; font-size: 14px; }
+
+.spinner-wheel-container {
+  position: relative; width: 280px; height: 280px; margin: 0 auto 16px;
+}
+.spinner-wheel {
+  width: 280px; height: 280px; border-radius: 50%;
+  border: 4px solid #333; position: relative; overflow: hidden;
+  transition: none;
+}
+.spinner-wheel.spinning {
+  animation: spinnerSpin 4s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+}
+.spinner-pointer {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent;
+  border-top: 24px solid #333; z-index: 5; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+}
+.spinner-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 30px; height: 30px; border-radius: 50%; background: #333; z-index: 4;
+}
+.spin-btn {
+  background: linear-gradient(135deg, #FF6B6B, #ee5a24);
+  color: white; border: none; padding: 14px 40px; border-radius: 50px;
+  font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.2s;
+}
+.spin-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,107,107,0.4); }
+.spin-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.spinner-result {
+  margin-top: 14px; padding: 14px; border-radius: 14px;
+  font-weight: 700; font-size: 15px; line-height: 1.4;
+  display: none;
+}
+.spinner-result.visible { display: block; animation: slideIn 0.4s ease; }
+.spinner-result-btn {
+  margin-top: 12px; padding: 10px 30px; border: none; border-radius: 50px;
+  color: white; font-size: 14px; font-weight: 700; cursor: pointer;
+  background: var(--purple); transition: all 0.2s;
+}
+.spinner-result-btn:hover { transform: translateY(-2px); }
+
+/* Move log */
 .move-log {
-  background: white; border-radius: 20px; padding: 16px 20px;
-  box-shadow: 0 6px 24px var(--shadow);
-  max-height: 180px; overflow-y: auto;
+  background: white; border-radius: 18px; padding: 14px; box-shadow: 0 3px 12px var(--shadow);
+  max-height: 200px; overflow-y: auto;
 }
-.move-log-title { font-size: 13px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-.log-entry {
-  font-size: 13px; padding: 6px 0; border-bottom: 1px solid #f0f0f0;
-  display: flex; align-items: center; gap: 6px;
-}
-.log-entry:last-child { border-bottom: none; }
+.move-log-title { font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+.log-entry { font-size: 12px; padding: 4px 0; border-bottom: 1px solid #f0f0f0; line-height: 1.4; }
 .log-entry .log-avatar { font-size: 16px; }
 .log-ahead { color: #2E7D32; }
 .log-back { color: #C62828; }
@@ -411,15 +346,10 @@ body {
   pointer-events: none;
 }
 
-/* Confetti */
 .confetti-piece {
   position: fixed; z-index: 700; width: 10px; height: 10px;
-  animation: confetti-fall 3s ease-in forwards;
-  pointer-events: none;
+  animation: confetti-fall 3s ease-in forwards; pointer-events: none;
 }
-
-/* Setback overlay shake */
-.board-container.shake { animation: shakeHead 0.5s ease; }
 
 /* Win screen */
 #win-screen {
@@ -434,10 +364,7 @@ body {
 .win-subtitle { font-size: 20px; opacity: 0.9; margin-bottom: 12px; }
 .win-message { font-size: 16px; opacity: 0.8; margin-bottom: 30px; max-width: 500px; line-height: 1.6; }
 .win-scores { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
-.win-score-card {
-  background: rgba(255,255,255,0.15); border-radius: 16px;
-  padding: 18px 26px; min-width: 110px;
-}
+.win-score-card { background: rgba(255,255,255,0.15); border-radius: 16px; padding: 18px 26px; min-width: 110px; }
 .win-score-card .avatar { font-size: 36px; }
 .win-score-card .name { font-weight: 700; margin: 4px 0; }
 .win-score-card .stars { color: var(--sun); font-weight: 800; }
@@ -449,86 +376,77 @@ body {
 }
 .play-again-btn:hover { transform: translateY(-3px); }
 
-/* Read-aloud encouragement */
-.read-aloud-prompt {
-  background: rgba(255,255,255,0.12); border-radius: 12px;
-  padding: 10px 16px; margin-top: 10px;
-  font-size: 12px; color: rgba(255,255,255,0.6);
-  text-align: center; font-style: italic;
-}
-
 /* Responsive */
 @media (max-width: 960px) {
   .game-area { grid-template-columns: 1fr; }
-  .board-path { grid-template-columns: repeat(6, 1fr); }
-  .setup-box { padding: 28px; }
+  .board-space { width: 48px; height: 48px; }
 }
 @media (max-width: 600px) {
-  .board-path { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .board-space { width: 40px; height: 40px; }
+  .board-space .space-icon { font-size: 14px; }
+  .board-space .space-label { font-size: 6px; }
   .game-header { padding: 10px 14px; }
   .scoreboard { padding: 10px 14px; gap: 8px; }
   .game-area { padding: 10px; gap: 10px; }
   .board-container { padding: 12px; }
-  .board-space { min-height: 52px; }
-  .board-space .space-icon { font-size: 16px; }
-  .board-space .space-label { font-size: 7px; }
   .side-panel { gap: 10px; }
+  .spinner-wheel-container, .spinner-wheel { width: 220px; height: 220px; }
 }
 </style>
 </head>
 <body>
 
-<!-- ========== SPLASH SCREEN ========== -->
+<!-- SPLASH -->
 <div id="splash-screen">
   <div class="splash-bg-shapes" id="splash-bg-shapes"></div>
   <div class="splash-stars" id="splash-stars"></div>
-  <div class="splash-mascot">🌟</div>
+  <div class="splash-mascot">&#127775;</div>
   <div class="splash-title">The Self-Esteem<br>Game</div>
-  <div class="splash-subtitle">An Interactive Family Adventure!</div>
-  <div class="splash-tagline">Draw cards, read affirmations aloud, move along the board, and build confidence together!</div>
+  <div class="splash-subtitle">Journey to Self-Esteem City!</div>
+  <div class="splash-tagline">Roll the dice, draw cards, read affirmations aloud, cope with setbacks, and build confidence on your journey from Hopesville to Self-Esteem City!</div>
   <button class="splash-play-btn" onclick="showSetup()">Let's Play!</button>
   <div class="splash-cards-preview">
-    <div class="splash-card-mini" style="background:var(--within-light);">💜</div>
-    <div class="splash-card-mini" style="background:var(--friends-light);">💙</div>
-    <div class="splash-card-mini" style="background:var(--family-light);">🧡</div>
-    <div class="splash-card-mini" style="background:var(--general-light);">💚</div>
+    <div class="splash-card-mini" style="background:var(--within-light);">&#10084;&#65039;</div>
+    <div class="splash-card-mini" style="background:var(--friends-light);">&#128153;</div>
+    <div class="splash-card-mini" style="background:var(--family-light);">&#129505;</div>
+    <div class="splash-card-mini" style="background:var(--general-light);">&#128154;</div>
   </div>
 </div>
 
-<!-- ========== SETUP SCREEN ========== -->
+<!-- SETUP -->
 <div id="setup-screen">
   <div class="setup-box">
-    <div style="font-size:56px; text-align:center; margin-bottom:10px;">👨‍👩‍👧‍👦</div>
+    <div style="font-size:56px; text-align:center; margin-bottom:10px;">&#128104;&#8205;&#128105;&#8205;&#128103;&#8205;&#128102;</div>
     <div class="setup-title">Who's Playing?</div>
     <div class="setup-sub">Add 2-6 players. Tap the emoji to change your avatar!</div>
     <div id="player-list"></div>
     <button class="add-player-btn" id="add-player-btn" onclick="addPlayerSlot()">+ Add Player</button>
     <div class="setup-rules">
-      <h3>How to Play 🎯</h3>
+      <h3>How to Play &#127919;</h3>
       <ul>
-        <li><strong>Roll the dice</strong> to land on a category space</li>
-        <li><strong>Draw a card</strong> — it's an affirmation or a setback</li>
-        <li><strong>Read it aloud</strong> together as a family!</li>
-        <li><strong>Affirmations</strong> move you forward 💚</li>
-        <li><strong>Setbacks</strong> move you back — but that's okay! 💛</li>
-        <li><strong>First to the finish</strong> wins — but everyone's a star! ⭐</li>
+        <li><strong>Roll the dice</strong> to find out what category of card to draw</li>
+        <li><strong>1</strong> = Within Myself, <strong>2</strong> = With My Family, <strong>3</strong> = With My Friends, <strong>4</strong> = In General</li>
+        <li><strong>5</strong> = Setback! (automatic setback card), <strong>6</strong> = Your Choice!</li>
+        <li><strong>Affirmation cards</strong> &#8212; read aloud and move forward!</li>
+        <li><strong>Setback cards</strong> &#8212; spin the Coping Wheel to decide your fate!</li>
+        <li><strong>First to Self-Esteem City wins!</strong> But everyone's a star! &#11088;</li>
       </ul>
     </div>
-    <button class="start-game-btn" onclick="startGame()">Start Adventure! 🚀</button>
+    <button class="start-game-btn" onclick="startGame()">Start the Journey! &#128640;</button>
   </div>
 </div>
 
-<!-- ========== MAIN GAME SCREEN ========== -->
+<!-- GAME -->
 <div id="game-screen">
   <div class="game-header">
-    <div class="game-logo">🌟 Self-Esteem Game</div>
+    <div class="game-logo">&#127775; Self-Esteem Game</div>
     <div class="turn-indicator" id="turn-indicator">
       <span id="turn-avatar"></span>
       <span id="turn-name"></span>'s Turn!
     </div>
     <div class="header-btns">
-      <button class="header-btn" onclick="toggleSound()" id="sound-btn" title="Toggle sound">🔊</button>
-      <button class="header-btn" onclick="showRules()" title="How to play">❓</button>
+      <button class="header-btn" onclick="toggleSound()" id="sound-btn" title="Toggle sound">&#128266;</button>
+      <button class="header-btn" onclick="showRules()" title="How to play">&#10067;</button>
     </div>
   </div>
 
@@ -536,23 +454,26 @@ body {
 
   <div class="game-area">
     <div class="board-container" id="board-container">
-      <div class="board-path" id="board"></div>
+      <div class="board-title-start">&#127960;&#65039; Hopesville &#8212; Start Your Journey!</div>
+      <div id="board"></div>
+      <div class="board-title-end">&#127961;&#65039; Self-Esteem City &#8212; You Made It! &#127775;</div>
     </div>
 
     <div class="side-panel">
       <div class="dice-area">
-        <div class="dice-label">Roll the Dice!</div>
+        <div class="dice-label">Roll for Category!</div>
         <div class="dice-container">
-          <div class="dice" id="dice" onclick="rollDice()">🎲</div>
+          <div class="dice" id="dice" onclick="rollDice()">&#127922;</div>
         </div>
-        <button class="roll-btn" id="roll-btn" onclick="rollDice()">Roll! 🎲</button>
+        <div id="dice-category-display"></div>
+        <button class="roll-btn" id="roll-btn" onclick="rollDice()">Roll! &#127922;</button>
       </div>
 
       <div class="card-area" id="card-area">
         <div class="card-area-title">Card Drawn</div>
         <div class="card-display" id="card-display" style="background:#f8f9fa;">
-          <div class="card-icon">🎯</div>
-          <div class="card-text card-placeholder">Roll the dice to land on a space and draw a card!</div>
+          <div class="card-icon">&#127919;</div>
+          <div class="card-text card-placeholder">Roll the dice to find your card category!</div>
         </div>
       </div>
 
@@ -566,42 +487,71 @@ body {
   </div>
 </div>
 
-<!-- ========== WIN SCREEN ========== -->
+<!-- WIN -->
 <div id="win-screen">
-  <div class="win-trophy">🏆</div>
+  <div class="win-trophy">&#127942;</div>
   <div class="win-title" id="win-title">Amazing!</div>
-  <div class="win-subtitle" id="win-subtitle">What an incredible adventure!</div>
+  <div class="win-subtitle" id="win-subtitle">What an incredible journey!</div>
   <div class="win-message">Every player is a star! Remember: your self-esteem grows every time you say kind things to yourself and others. Keep shining bright!</div>
   <div class="win-scores" id="win-scores"></div>
-  <button class="play-again-btn" onclick="playAgain()">Play Again! 🌟</button>
+  <button class="play-again-btn" onclick="playAgain()">Play Again! &#127775;</button>
 </div>
 
-<!-- ========== RULES MODAL ========== -->
+<!-- RULES MODAL -->
 <div id="rules-modal" style="display:none; position:fixed; inset:0; z-index:500; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px;">
   <div style="background:white; border-radius:24px; padding:36px; max-width:480px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:slideIn 0.4s ease;">
-    <h2 style="text-align:center; margin-bottom:16px;">How to Play 🎯</h2>
+    <h2 style="text-align:center; margin-bottom:16px;">How to Play &#127919;</h2>
     <div style="font-size:14px; line-height:1.8; color:var(--text-light);">
-      <p><strong>1.</strong> Roll the dice to move along the board</p>
-      <p><strong>2.</strong> You'll land on a category space — draw a card!</p>
-      <p><strong>3. Read the card aloud</strong> together as a family</p>
-      <p><strong>4.</strong> <span style="color:#2E7D32; font-weight:700;">Affirmation cards</span> move you forward extra spaces</p>
-      <p><strong>5.</strong> <span style="color:#C62828; font-weight:700;">Setback cards</span> move you back — but it's a learning moment!</p>
-      <p><strong>6.</strong> ⭐ Star spaces are always a bonus!</p>
-      <p><strong>7.</strong> First player to reach the finish wins!</p>
-      <p style="margin-top:12px; font-style:italic;">Remember: everyone wins by growing their self-esteem! 💖</p>
+      <p><strong>1.</strong> Roll the dice to find your card category</p>
+      <p><strong>2.</strong> Draw a card from that category</p>
+      <p><strong>3. Read the card aloud</strong> together!</p>
+      <p><strong>4.</strong> <span style="color:#2E7D32; font-weight:700;">Affirmation cards</span> move you forward</p>
+      <p><strong>5.</strong> <span style="color:#C62828; font-weight:700;">Setback cards</span> trigger the Coping Wheel!</p>
+      <p><strong>6.</strong> Spin to find out how you handle the setback</p>
+      <p><strong>7.</strong> First player to reach Self-Esteem City wins!</p>
+      <p style="margin-top:8px;"><strong>Dice:</strong> 1=Within Myself, 2=Family, 3=Friends, 4=General, 5=Setback!, 6=Your Choice</p>
+      <p style="margin-top:12px; font-style:italic;">Remember: everyone wins by growing their self-esteem! &#128150;</p>
     </div>
-    <button onclick="hideRules()" style="display:block; margin:20px auto 0; padding:12px 36px; background:var(--purple); color:white; border:none; border-radius:50px; font-size:16px; font-weight:700; cursor:pointer;">Got it! ✨</button>
+    <button onclick="hideRules()" style="display:block; margin:20px auto 0; padding:12px 36px; background:var(--purple); color:white; border:none; border-radius:50px; font-size:16px; font-weight:700; cursor:pointer;">Got it! &#10024;</button>
+  </div>
+</div>
+
+<!-- CATEGORY CHOICE MODAL -->
+<div id="category-choice-modal">
+  <div class="category-choice-box">
+    <h2>&#127775; Your Choice!</h2>
+    <p>You rolled a 6! Pick any category:</p>
+    <button class="category-btn" style="border-color:var(--within); color:var(--within);" onclick="chooseCategory('within')">&#10084;&#65039; Within Myself</button>
+    <button class="category-btn" style="border-color:var(--family); color:#E65100;" onclick="chooseCategory('family')">&#129505; With My Family</button>
+    <button class="category-btn" style="border-color:var(--friends); color:var(--friends);" onclick="chooseCategory('friends')">&#128153; With My Friends</button>
+    <button class="category-btn" style="border-color:var(--general); color:var(--general);" onclick="chooseCategory('general')">&#128154; In General</button>
+  </div>
+</div>
+
+<!-- SPINNER OVERLAY -->
+<div id="spinner-overlay">
+  <div class="spinner-box">
+    <h2>&#127760; Coping Wheel</h2>
+    <div class="spinner-subtitle">How will you handle this setback?</div>
+    <div class="spinner-wheel-container">
+      <div class="spinner-pointer"></div>
+      <canvas id="spinner-canvas" width="280" height="280"></canvas>
+      <div class="spinner-center"></div>
+    </div>
+    <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Spin the Wheel! &#127760;</button>
+    <div class="spinner-result" id="spinner-result"></div>
   </div>
 </div>
 
 <script>
-// ========== CARD DATA (from the actual Self-Esteem Game) ==========
+// ========== CARD DATA ==========
 const CARD_DATA = {
   within: {
     name: "Within Myself",
-    icon: "💜",
+    icon: "\u2764\uFE0F",
     color: "var(--within)",
     bgColor: "var(--within-bg)",
+    diceNum: 1,
     affirmations: [
       { text: "Improving my self-esteem is an on-going goal in my life", move: 4 },
       { text: "I deserve to feel good about myself", move: 4 },
@@ -653,130 +603,206 @@ const CARD_DATA = {
       { text: "I know I'm a good person", move: 2 },
       { text: "I accept myself as I am", move: 2 },
       { text: "I have self-discipline when I need it", move: 2 },
-      { text: "I am patient, kind, and gentle with myself", move: 3 },
+      { text: "I am patient, kind, and gentle with myself", move: 3 }
     ],
     setbacks: [
       { text: "You attack yourself with put-downs", move: 3 },
       { text: "You tell yourself that you hate yourself", move: 4 },
-      { text: "You think you are a terrible person because of your \"bad\" thoughts", move: 3 },
+      { text: "You think you are a terrible person because of your 'bad' thoughts", move: 3 },
       { text: "You feel like a coward because you experience fear", move: 2 },
       { text: "You won't forgive yourself", move: 2 },
       { text: "You are filled with self-doubt", move: 4 },
       { text: "You think winning is your worth", move: 4 },
       { text: "Your jealousy makes you mean-spirited", move: 4 },
       { text: "You think gloomy so you feel gloomy", move: 3 },
-      { text: "You take pleasure in hurting others", move: 5 },
+      { text: "You take pleasure in hurting others", move: 5 }
     ]
   },
   friends: {
     name: "With My Friends",
-    icon: "💙",
+    icon: "\uD83D\uDC99",
     color: "var(--friends)",
     bgColor: "var(--friends-bg)",
+    diceNum: 3,
     affirmations: [
       { text: "I do not allow personal comparisons with friends to affect my self-esteem", move: 4 },
       { text: "I'm good at giving and accepting compliments", move: 2 },
+      { text: "I choose friends who support and encourage me", move: 3 },
+      { text: "I am a loyal and caring friend", move: 3 },
+      { text: "I lift my friends up instead of putting them down", move: 4 },
+      { text: "I celebrate my friends' successes", move: 2 },
+      { text: "I can disagree with friends and still be friends", move: 3 },
+      { text: "I don't need everyone to like me to feel good about myself", move: 4 },
+      { text: "I am honest with my friends", move: 2 },
+      { text: "I stand up for my friends when they need me", move: 3 }
     ],
     setbacks: [
       { text: "You compare yourself to others and put yourself down", move: 4 },
       { text: "Your jealousy causes you hard feelings", move: 4 },
       { text: "You take compliments as if people are just being nice and don't really mean it", move: 3 },
       { text: "You think you are better than everyone else", move: 2 },
+      { text: "You gossip about your friends behind their backs", move: 3 },
+      { text: "You let peer pressure make your decisions", move: 4 }
     ]
   },
   family: {
     name: "With My Family",
-    icon: "🧡",
+    icon: "\uD83E\uDDE1",
     color: "var(--family)",
     bgColor: "var(--family-bg)",
-    affirmations: [],
+    diceNum: 2,
+    affirmations: [
+      { text: "I appreciate the love my family gives me", move: 3 },
+      { text: "I can express my feelings to my family", move: 3 },
+      { text: "I help make my family stronger", move: 4 },
+      { text: "I am grateful for the people who care about me", move: 2 },
+      { text: "I treat my family with respect and kindness", move: 3 },
+      { text: "I know my family believes in me", move: 4 },
+      { text: "I listen to my family even when I disagree", move: 2 },
+      { text: "I feel safe sharing my feelings with my family", move: 3 },
+      { text: "My family's love helps me grow", move: 4 },
+      { text: "I make my family proud by being myself", move: 3 }
+    ],
     setbacks: [
       { text: "When others put you down, you believe them", move: 4 },
+      { text: "You take your frustrations out on your family", move: 3 },
+      { text: "You refuse to listen to family advice", move: 2 },
+      { text: "You don't tell your family how you really feel", move: 3 },
+      { text: "You blame your family for your problems", move: 4 }
     ]
   },
   general: {
     name: "In General",
-    icon: "💚",
+    icon: "\uD83D\uDC9A",
     color: "var(--general)",
     bgColor: "var(--general-bg)",
+    diceNum: 4,
     affirmations: [
       { text: "If I'm okay with me, I'm okay", move: 3 },
+      { text: "I treat everyone with respect", move: 3 },
+      { text: "I learn something new every day", move: 2 },
+      { text: "I am brave enough to try new things", move: 4 },
+      { text: "I make the world a better place", move: 4 },
+      { text: "I am responsible for my own happiness", move: 3 },
+      { text: "I choose kindness every day", move: 2 },
+      { text: "I see challenges as opportunities to grow", move: 4 },
+      { text: "I am proud of who I am becoming", move: 3 },
+      { text: "I have the power to create positive change", move: 4 }
     ],
     setbacks: [
       { text: "You are overly self-critical", move: 3 },
       { text: "You are filled with self-blame", move: 4 },
       { text: "You exaggerate to make yourself look better", move: 3 },
-      { text: "You defend your mistakes", move: 3 },
+      { text: "You defend your mistakes instead of learning from them", move: 3 },
       { text: "You are filled with self-rejection", move: 3 },
-      { text: "You think you're too good for other people", move: 2 },
+      { text: "You think you're too good for other people", move: 2 }
     ]
   }
 };
 
-// ========== BOARD CONFIG ==========
-const TOTAL_SPACES = 40;
-const WIN_SPACE = TOTAL_SPACES - 1;
-const AVATARS = ['\u{1F981}','\u{1F431}','\u{1F436}','\u{1F98A}','\u{1F43C}','\u{1F428}','\u{1F984}','\u{1F438}','\u{1F430}','\u{1F43B}','\u{1F42F}','\u{1F98B}','\u{1F419}','\u{1F433}','\u{1FA69}','\u{1F432}'];
-
-// Build the board spaces
-const CATEGORIES = ['within', 'friends', 'family', 'general'];
-function buildSpaceTypes() {
-  const spaces = ['start'];
-  for (let i = 1; i < TOTAL_SPACES - 1; i++) {
-    if (i % 8 === 0) {
-      spaces.push('star'); // bonus star every 8 spaces
-    } else {
-      // Weighted: more 'within' since it has more cards
-      const weights = [
-        { cat: 'within', w: 5 },
-        { cat: 'friends', w: 2 },
-        { cat: 'family', w: 1 },
-        { cat: 'general', w: 2 },
-      ];
-      const total = weights.reduce((s, w) => s + w.w, 0);
-      let r = Math.random() * total;
-      let chosen = 'within';
-      for (const w of weights) {
-        r -= w.w;
-        if (r <= 0) { chosen = w.cat; break; }
-      }
-      spaces.push(chosen);
-    }
+// ========== COPING SPINNER OPTIONS ==========
+const COPING_OPTIONS = [
+  {
+    id: 1,
+    text: "You don't learn from setbacks; accept the negative value of the card.",
+    shortText: "Accept\nNegative",
+    effect: "accept", // move back by card value
+    color: "#FF7043", // orange (bad)
+    isPositive: false
+  },
+  {
+    id: 2,
+    text: "You say you don't care about anything; double the negative value of the card.",
+    shortText: "Double\nNegative",
+    effect: "double_negative", // move back by 2x card value
+    color: "#FF5722", // deep orange (worst)
+    isPositive: false
+  },
+  {
+    id: 3,
+    text: "You put your energy into a fast recovery from your setback; gain back 3 places.",
+    shortText: "Fast\nRecovery",
+    effect: "recover_3", // move forward 3
+    color: "#26A69A", // teal (good)
+    isPositive: true
+  },
+  {
+    id: 4,
+    text: "You learn a valuable lesson from your setback; change the negative value to a positive.",
+    shortText: "Learn\nLesson",
+    effect: "flip_positive", // move forward by card value
+    color: "#42A5F5", // blue (good)
+    isPositive: true
+  },
+  {
+    id: 5,
+    text: "You learn how to turn a setback to your advantage; change the negative value to a positive and double it.",
+    shortText: "Double\nPositive!",
+    effect: "double_positive", // move forward by 2x card value
+    color: "#66BB6A", // green (best!)
+    isPositive: true
+  },
+  {
+    id: 6,
+    text: "You avoid dealing with setbacks; lose 2 more places.",
+    shortText: "Avoid\nSetback",
+    effect: "lose_2_more", // move back 2 more
+    color: "#EF5350", // red (bad)
+    isPositive: false
   }
-  spaces.push('finish');
-  return spaces;
-}
+];
 
-const SPACE_TYPES = buildSpaceTypes();
+// ========== BOARD CONFIG ==========
+const TOTAL_SPACES = 36;
+const WIN_SPACE = TOTAL_SPACES - 1;
+const SPACES_PER_ROW = 7;
+const AVATARS = ['\uD83E\uDD81','\uD83D\uDC31','\uD83D\uDC36','\uD83E\uDD8A','\uD83D\uDC3C','\uD83D\uDC28','\uD83E\uDD84','\uD83D\uDC38','\uD83D\uDC30','\uD83D\uDC3B','\uD83D\uDC2F','\uD83E\uDD8B','\uD83D\uDC19','\uD83D\uDC33','\uD83E\uDE69','\uD83D\uDC32'];
 
-const SPACE_CONFIG = {
-  start:   { icon: '🏠', label: 'Start',    cssClass: 'space-start' },
-  within:  { icon: '💜', label: 'Within',   cssClass: 'space-within' },
-  friends: { icon: '💙', label: 'Friends',  cssClass: 'space-friends' },
-  family:  { icon: '🧡', label: 'Family',   cssClass: 'space-family' },
-  general: { icon: '💚', label: 'General',  cssClass: 'space-general' },
-  star:    { icon: '⭐', label: 'Bonus!',   cssClass: 'space-star' },
-  finish:  { icon: '🏆', label: 'Finish!',  cssClass: 'space-finish' },
+const BOARD_AFFIRMATIONS = [
+  "", // start
+  "I feel good about me", "I am special", "I am beautiful", "I am lovable",
+  "I feel good about me", "I am important", "I am cool",
+  "I feel good about me", "I am positive", "I am a good person", "I feel good about me",
+  "I am one of a kind", "I feel good about me", "I am strong",
+  "I feel good about me", "I am worthy", "I am brave",
+  "I feel good about me", "I am kind", "I am smart", "I feel good about me",
+  "I am creative", "I am helpful", "I feel good about me",
+  "I am unique", "I am talented", "I feel good about me",
+  "I am amazing", "I am confident", "I feel good about me",
+  "I am wonderful", "I am powerful", "I feel good about me",
+  "I am incredible", "" // finish
+];
+
+const CATEGORIES = ['within', 'friends', 'family', 'general'];
+
+const DICE_FACES = {
+  1: { label: "Within Myself", icon: "\u2764\uFE0F", color: "var(--within)", bgColor: "var(--within-bg)" },
+  2: { label: "With My Family", icon: "\uD83E\uDDE1", color: "var(--family)", bgColor: "var(--family-bg)" },
+  3: { label: "With My Friends", icon: "\uD83D\uDC99", color: "var(--friends)", bgColor: "var(--friends-bg)" },
+  4: { label: "In General", icon: "\uD83D\uDC9A", color: "var(--general)", bgColor: "var(--general-bg)" },
+  5: { label: "Setback!", icon: "\u26A0\uFE0F", color: "var(--setback)", bgColor: "var(--setback-bg)" },
+  6: { label: "Your Choice!", icon: "\uD83C\uDF1F", color: "var(--purple)", bgColor: "#F3E5F5" }
 };
 
-// Affirmation encouragement after reading aloud
+const DICE_TO_CATEGORY = { 1: 'within', 2: 'family', 3: 'friends', 4: 'general' };
+
 const AFFIRMATION_PRAISE = [
-  "Beautiful! Say it like you mean it! 💖",
-  "Yes! That's the truth! 🌟",
-  "You ARE amazing! ✨",
-  "What a powerful thought! 💪",
-  "Remember this always! 🌈",
-  "Let that sink in! 💝",
-  "Wonderful! Believe it! 🦋",
-  "That's your superpower! ⚡",
+  "Beautiful! Say it like you mean it! \uD83D\uDC96",
+  "Yes! That's the truth! \uD83C\uDF1F",
+  "You ARE amazing! \u2728",
+  "What a powerful thought! \uD83D\uDCAA",
+  "Remember this always! \uD83C\uDF08",
+  "Let that sink in! \uD83D\uDC9D",
+  "Wonderful! Believe it! \uD83E\uDD8B",
+  "That's your superpower! \u26A1"
 ];
 
 const SETBACK_COMFORT = [
-  "It's okay \u2014 we all have tough moments. You'll bounce back! 💛",
-  "Everyone stumbles sometimes. You're still wonderful! 🌻",
-  "This is just a bump in the road. Keep going! 🌈",
-  "Remember: setbacks help us learn and grow! 🌱",
-  "You're stronger than any setback! 💪",
+  "It's okay \u2014 let's see how you cope! \uD83D\uDC9B",
+  "Everyone faces setbacks. Time to spin the wheel! \uD83C\uDF3B",
+  "This is a chance to show your strength! \uD83C\uDF08",
+  "How you handle setbacks is what matters! \uD83C\uDF31",
+  "You're stronger than any setback! \uD83D\uDCAA"
 ];
 
 // ========== GAME STATE ==========
@@ -788,6 +814,9 @@ let isRolling = false;
 let isMoving = false;
 let gameLog = [];
 let usedCards = { within: { a: [], s: [] }, friends: { a: [], s: [] }, family: { a: [], s: [] }, general: { a: [], s: [] } };
+let currentSetbackCard = null;
+let currentSetbackCategory = null;
+let skipTurns = {}; // playerIndex -> number of turns to skip
 
 // ========== AUDIO ==========
 let audioCtx;
@@ -813,8 +842,9 @@ function playCardSound() { playTone(659,0.2,'sine',0.12); setTimeout(()=>playTon
 function playStarSound() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,0.3,'sine',0.1),i*120)); }
 function playSetbackSound() { playTone(330,0.3,'sawtooth',0.08); setTimeout(()=>playTone(260,0.4,'sawtooth',0.06),200); }
 function playWinSound() { [523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>playTone(f,0.4,'sine',0.12),i*200)); }
+function playSpinSound() { let i=0; const iv=setInterval(()=>{playTone(300+i*20,0.08,'square',0.06);i++;if(i>30)clearInterval(iv);},80); }
 
-// ========== SPLASH INIT ==========
+// ========== SPLASH ==========
 (function initSplash() {
   const stars = document.getElementById('splash-stars');
   for (let i = 0; i < 18; i++) {
@@ -878,9 +908,9 @@ function startGame() {
     avatar: AVATARS[s.avatarIdx],
     position: 0, stars: 0, affirmationsRead: 0
   }));
-  // Reset used cards
   for (const cat of CATEGORIES) usedCards[cat] = { a: [], s: [] };
   gameLog = [];
+  skipTurns = {};
 
   document.getElementById('setup-screen').classList.remove('visible');
   document.getElementById('game-screen').classList.add('visible');
@@ -890,36 +920,65 @@ function startGame() {
   renderScoreboard();
   updateTurnIndicator();
   placeTokens();
-  addLogEntry(null, "Game started! Roll the dice! \uD83C\uDFB2");
+  drawSpinnerWheel();
+  addLogEntry(null, "The journey begins! Roll the dice! \uD83C\uDFB2");
 }
 
-// ========== BOARD ==========
+// ========== BUILD BOARD (winding path) ==========
 function buildBoard() {
   const board = document.getElementById('board');
   board.innerHTML = '';
-  for (let i = 0; i < TOTAL_SPACES; i++) {
-    const type = SPACE_TYPES[i];
-    const config = SPACE_CONFIG[type];
-    const space = document.createElement('div');
-    space.className = `board-space ${config.cssClass}`;
-    space.id = `space-${i}`;
-    space.innerHTML = `
-      <span class="space-num">${i}</span>
-      <span class="space-icon">${config.icon}</span>
-      <span class="space-label">${config.label}</span>
-    `;
-    board.appendChild(space);
+  board.style.position = 'relative';
+
+  const numRows = Math.ceil(TOTAL_SPACES / SPACES_PER_ROW);
+
+  let spaceIndex = 0;
+  for (let row = 0; row < numRows; row++) {
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'board-row' + (row % 2 === 1 ? ' reverse' : '');
+
+    const spacesInThisRow = Math.min(SPACES_PER_ROW, TOTAL_SPACES - spaceIndex);
+    for (let col = 0; col < spacesInThisRow; col++) {
+      const i = spaceIndex;
+      const space = document.createElement('div');
+
+      let cssClass = 'board-space space-affirmation';
+      let icon = '\uD83D\uDC9B';
+      let label = BOARD_AFFIRMATIONS[i] || '';
+
+      if (i === 0) {
+        cssClass = 'board-space space-start';
+        icon = '\uD83C\uDFE0';
+        label = 'Hopesville';
+      } else if (i === WIN_SPACE) {
+        cssClass = 'board-space space-finish';
+        icon = '\uD83C\uDFC6';
+        label = 'Self-Esteem City!';
+      }
+
+      space.className = cssClass;
+      space.id = `space-${i}`;
+      space.innerHTML = `
+        <span class="space-num">${i}</span>
+        <span class="space-icon">${icon}</span>
+        <span class="space-label">${label}</span>
+      `;
+      rowDiv.appendChild(space);
+      spaceIndex++;
+    }
+    board.appendChild(rowDiv);
   }
 }
 
 // ========== TOKENS ==========
 function placeTokens() {
   document.querySelectorAll('.player-token').forEach(t => t.remove());
+  const board = document.getElementById('board');
   players.forEach((p, i) => {
     const token = document.createElement('div');
     token.className = 'player-token'; token.id = `token-${i}`;
     token.textContent = p.avatar;
-    document.getElementById('board').appendChild(token);
+    board.appendChild(token);
     positionToken(i);
   });
 }
@@ -932,8 +991,8 @@ function positionToken(idx) {
   const bR = board.getBoundingClientRect(); const sR = space.getBoundingClientRect();
   const offs = [[-7,-7],[7,-7],[-7,7],[7,7],[0,-10],[0,10]];
   const o = offs[idx] || [0,0];
-  token.style.left = (sR.left - bR.left + sR.width/2 - 10 + o[0]) + 'px';
-  token.style.top = (sR.top - bR.top + sR.height/2 - 10 + o[1]) + 'px';
+  token.style.left = (sR.left - bR.left + sR.width/2 - 12 + o[0]) + 'px';
+  token.style.top = (sR.top - bR.top + sR.height/2 - 12 + o[1]) + 'px';
 }
 
 // ========== SCOREBOARD ==========
@@ -942,8 +1001,8 @@ function renderScoreboard() {
     <div class="score-card ${i === currentPlayerIndex ? 'active' : ''}" id="score-${i}">
       <div class="score-avatar">${p.avatar}</div>
       <div class="score-info">
-        <div class="score-name">${p.name}</div>
-        <div class="score-stars">${'\u2B50'.repeat(Math.min(p.stars, 20))} ${p.stars > 0 ? `(${p.stars})` : '(no stars yet)'}</div>
+        <div class="score-name">${p.name}${skipTurns[i] ? ' \u23F8' : ''}</div>
+        <div class="score-stars">${'\u2B50'.repeat(Math.min(p.stars, 20))} ${p.stars > 0 ? `(${p.stars})` : ''}</div>
         <div class="score-pos">Space ${p.position} / ${WIN_SPACE}</div>
       </div>
     </div>
@@ -955,7 +1014,7 @@ function updateTurnIndicator() {
   document.getElementById('turn-name').textContent = p.name;
 }
 
-// ========== DICE ==========
+// ========== DICE (determines category) ==========
 function rollDice() {
   if (isRolling || isMoving || !gameStarted) return;
   isRolling = true;
@@ -967,22 +1026,329 @@ function rollDice() {
 
   let count = 0;
   const interval = setInterval(() => {
-    dice.textContent = Math.floor(Math.random() * 6) + 1;
+    const r = Math.floor(Math.random() * 6) + 1;
+    const face = DICE_FACES[r];
+    dice.textContent = face.icon;
+    dice.style.background = face.bgColor;
     count++;
-    if (count > 12) {
+    if (count > 14) {
       clearInterval(interval);
       const result = Math.floor(Math.random() * 6) + 1;
-      dice.textContent = result;
+      const face = DICE_FACES[result];
+      dice.textContent = face.icon;
+      dice.style.background = face.bgColor;
       dice.classList.remove('rolling');
-      const p = players[currentPlayerIndex];
-      addLogEntry(currentPlayerIndex, `rolled a ${result}`);
-      setTimeout(() => movePlayer(result, true), 400);
+
+      document.getElementById('dice-category-display').innerHTML =
+        `<div class="dice-category" style="background:${face.bgColor}; color:${face.color};">${face.icon} ${face.label}</div>`;
+
+      addLogEntry(currentPlayerIndex, `rolled ${result}: ${face.label}`);
+
+      setTimeout(() => handleDiceResult(result), 600);
     }
   }, 70);
 }
 
-// ========== MOVE PLAYER ==========
-function movePlayer(steps, forward) {
+function handleDiceResult(result) {
+  if (result === 6) {
+    // Player's choice
+    document.getElementById('category-choice-modal').classList.add('visible');
+  } else if (result === 5) {
+    // Forced setback
+    const cat = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+    drawCard(cat, true); // force setback
+  } else {
+    const cat = DICE_TO_CATEGORY[result];
+    drawCard(cat, false);
+  }
+}
+
+function chooseCategory(cat) {
+  document.getElementById('category-choice-modal').classList.remove('visible');
+  drawCard(cat, false);
+}
+
+// ========== DRAW CARD ==========
+function drawCard(category, forceSetback) {
+  playCardSound();
+  const data = CARD_DATA[category];
+
+  let isAffirmation;
+  if (forceSetback) {
+    isAffirmation = false;
+  } else {
+    const hasSetbacks = data.setbacks.length > 0;
+    const hasAffirmations = data.affirmations.length > 0;
+    if (!hasSetbacks && !hasAffirmations) { nextTurn(); return; }
+    if (!hasSetbacks) isAffirmation = true;
+    else if (!hasAffirmations) isAffirmation = false;
+    else isAffirmation = Math.random() < 0.70;
+  }
+
+  const pool = isAffirmation ? data.affirmations : data.setbacks;
+  const usedKey = isAffirmation ? 'a' : 's';
+
+  let available = pool.filter((_, i) => !usedCards[category][usedKey].includes(i));
+  if (available.length === 0) {
+    usedCards[category][usedKey] = [];
+    available = pool;
+  }
+  const cardIdx = pool.indexOf(available[Math.floor(Math.random() * available.length)]);
+  usedCards[category][usedKey].push(cardIdx);
+  const card = pool[cardIdx];
+
+  showCardDisplay(card, category, isAffirmation, data);
+}
+
+function showCardDisplay(card, category, isAffirmation, data) {
+  const display = document.getElementById('card-display');
+  const bgColor = isAffirmation ? data.bgColor : 'var(--setback-bg)';
+  const textColor = isAffirmation ? data.color : 'var(--setback)';
+
+  display.style.background = bgColor;
+  display.className = 'card-display flip-in';
+
+  if (isAffirmation) {
+    const movementText = `Move Ahead ${card.move} \u2714`;
+    display.innerHTML = `
+      <span class="card-badge affirmation">\u2728 Affirmation</span>
+      <div class="card-icon">${data.icon}</div>
+      <div class="card-text" style="color:${textColor}">"${card.text}"</div>
+      <div style="background:rgba(0,0,0,0.04); color:var(--text-light); border-radius:8px; padding:8px 12px; margin-top:8px; font-size:12px;">
+        \uD83D\uDD0A <strong>Read this aloud together!</strong>
+      </div>
+      <div class="card-movement ahead">\u2B06\uFE0F ${movementText}</div>
+      <div class="card-category-label">${data.name}</div>
+      <button class="card-read-btn" style="background:var(--grass)"
+              onclick="onAffirmationDone(${card.move})">
+        I said it! Let's go! \uD83D\uDE80
+      </button>
+    `;
+    addLogEntry(currentPlayerIndex, `\u2728 "${card.text}" \u2014 Move ahead ${card.move}!`, 'log-ahead');
+  } else {
+    // Setback - will trigger spinner
+    const comfort = SETBACK_COMFORT[Math.floor(Math.random() * SETBACK_COMFORT.length)];
+    display.innerHTML = `
+      <span class="card-badge setback">\u26A0\uFE0F Setback</span>
+      <div class="card-icon">${data.icon}</div>
+      <div class="card-text" style="color:${textColor}">"${card.text}"</div>
+      <div style="background:rgba(0,0,0,0.04); color:var(--text-light); border-radius:8px; padding:8px 12px; margin-top:8px; font-size:12px;">
+        \uD83D\uDD0A <strong>Read this aloud together!</strong>
+      </div>
+      <div class="card-movement back">\u2B07\uFE0F Setback value: ${card.move}</div>
+      <div class="card-category-label">${data.name}</div>
+      <div style="margin-top:6px; font-size:13px; color:var(--text-light);">${comfort}</div>
+      <button class="card-read-btn" style="background:var(--orange)"
+              onclick="onSetbackDone(${card.move})">
+        Spin the Coping Wheel! \uD83C\uDF00
+      </button>
+    `;
+    addLogEntry(currentPlayerIndex, `\u26A0\uFE0F "${card.text}" \u2014 Setback (${card.move})`, 'log-back');
+    currentSetbackCard = card;
+  }
+}
+
+function onAffirmationDone(moveAmount) {
+  const p = players[currentPlayerIndex];
+  p.stars++;
+  p.affirmationsRead++;
+  playStarSound();
+  showCompliment();
+  renderScoreboard();
+  applyMovement(moveAmount, true);
+}
+
+function onSetbackDone(moveAmount) {
+  currentSetbackCard = { move: moveAmount };
+  playSetbackSound();
+  document.getElementById('board-container').classList.add('shake');
+  setTimeout(() => document.getElementById('board-container').classList.remove('shake'), 500);
+  showSpinner();
+}
+
+// ========== COPING SPINNER ==========
+function drawSpinnerWheel() {
+  const canvas = document.getElementById('spinner-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  const r = cx - 4;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const numSegments = COPING_OPTIONS.length;
+  const anglePerSegment = (2 * Math.PI) / numSegments;
+
+  for (let i = 0; i < numSegments; i++) {
+    const startAngle = i * anglePerSegment - Math.PI / 2;
+    const endAngle = startAngle + anglePerSegment;
+
+    // Draw segment
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fillStyle = COPING_OPTIONS[i].color;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Draw text
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(startAngle + anglePerSegment / 2);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px sans-serif';
+
+    const lines = COPING_OPTIONS[i].shortText.split('\n');
+    const textR = r * 0.62;
+    lines.forEach((line, li) => {
+      ctx.fillText(line, textR, (li - (lines.length-1)/2) * 13);
+    });
+
+    // Draw number
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillText(COPING_OPTIONS[i].id, r * 0.28, 5);
+
+    ctx.restore();
+  }
+}
+
+function showSpinner() {
+  const overlay = document.getElementById('spinner-overlay');
+  overlay.classList.add('visible');
+  document.getElementById('spin-btn').disabled = false;
+  document.getElementById('spinner-result').classList.remove('visible');
+
+  // Reset canvas rotation
+  const canvas = document.getElementById('spinner-canvas');
+  canvas.style.transition = 'none';
+  canvas.style.transform = 'rotate(0deg)';
+  drawSpinnerWheel();
+}
+
+function spinWheel() {
+  const spinBtn = document.getElementById('spin-btn');
+  spinBtn.disabled = true;
+  playSpinSound();
+
+  const numSegments = COPING_OPTIONS.length;
+  const anglePerSegment = 360 / numSegments;
+
+  // Random result
+  const resultIdx = Math.floor(Math.random() * numSegments);
+  const option = COPING_OPTIONS[resultIdx];
+
+  // Calculate spin: we want the pointer (at top) to land on the chosen segment
+  // Segments start at -90deg (top). Segment i spans from i*60 to (i+1)*60 degrees
+  // The pointer is at top (0 degrees in visual terms, but -90 in math terms)
+  // We need to rotate the wheel so that the chosen segment is at the top
+  const segmentCenter = resultIdx * anglePerSegment + anglePerSegment / 2;
+  // We need the wheel to rotate so segmentCenter is at 0 (top)
+  // Total rotation = N full spins + (360 - segmentCenter)
+  const fullSpins = 5 + Math.floor(Math.random() * 3); // 5-7 full spins
+  const finalAngle = fullSpins * 360 + (360 - segmentCenter);
+
+  const canvas = document.getElementById('spinner-canvas');
+  canvas.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+  canvas.style.transform = `rotate(${finalAngle}deg)`;
+
+  setTimeout(() => {
+    showSpinnerResult(option);
+  }, 4200);
+}
+
+function showSpinnerResult(option) {
+  const resultDiv = document.getElementById('spinner-result');
+  const moveVal = currentSetbackCard ? currentSetbackCard.move : 3;
+
+  let outcomeText = '';
+  let moveDesc = '';
+  let bgColor = '';
+
+  switch(option.effect) {
+    case 'accept':
+      outcomeText = option.text;
+      moveDesc = `Move back ${moveVal} spaces`;
+      bgColor = '#FFF3E0';
+      break;
+    case 'double_negative':
+      outcomeText = option.text;
+      moveDesc = `Move back ${moveVal * 2} spaces!`;
+      bgColor = '#FFEBEE';
+      break;
+    case 'recover_3':
+      outcomeText = option.text;
+      moveDesc = `Move forward 3 spaces!`;
+      bgColor = '#E0F2F1';
+      break;
+    case 'flip_positive':
+      outcomeText = option.text;
+      moveDesc = `Move forward ${moveVal} spaces!`;
+      bgColor = '#E3F2FD';
+      break;
+    case 'double_positive':
+      outcomeText = option.text;
+      moveDesc = `Move forward ${moveVal * 2} spaces!`;
+      bgColor = '#E8F5E9';
+      break;
+    case 'lose_2_more':
+      outcomeText = option.text;
+      moveDesc = `Move back ${moveVal + 2} spaces`;
+      bgColor = '#FFEBEE';
+      break;
+  }
+
+  resultDiv.style.background = bgColor;
+  resultDiv.innerHTML = `
+    <div style="font-size:13px; margin-bottom:8px;">${outcomeText}</div>
+    <div style="font-size:18px; font-weight:800;">${option.isPositive ? '\uD83C\uDF1F' : '\uD83D\uDE14'} ${moveDesc}</div>
+    <button class="spinner-result-btn" onclick="applySpinnerResult('${option.effect}', ${moveVal})">
+      ${option.isPositive ? "Let's go! \uD83D\uDE80" : "Keep going! \uD83D\uDCAA"}
+    </button>
+  `;
+  resultDiv.classList.add('visible');
+
+  addLogEntry(currentPlayerIndex,
+    `\uD83C\uDF00 Coping: "${option.shortText.replace('\n',' ')}" \u2014 ${moveDesc}`,
+    option.isPositive ? 'log-ahead' : 'log-back'
+  );
+}
+
+function applySpinnerResult(effect, moveVal) {
+  document.getElementById('spinner-overlay').classList.remove('visible');
+
+  let steps = 0;
+  let forward = false;
+
+  switch(effect) {
+    case 'accept':
+      steps = moveVal; forward = false; break;
+    case 'double_negative':
+      steps = moveVal * 2; forward = false; break;
+    case 'recover_3':
+      steps = 3; forward = true; break;
+    case 'flip_positive':
+      steps = moveVal; forward = true;
+      if (forward) { players[currentPlayerIndex].stars++; showCompliment(); }
+      break;
+    case 'double_positive':
+      steps = moveVal * 2; forward = true;
+      if (forward) { players[currentPlayerIndex].stars += 2; showCompliment(); }
+      break;
+    case 'lose_2_more':
+      steps = moveVal + 2; forward = false; break;
+  }
+
+  renderScoreboard();
+  applyMovement(steps, forward);
+}
+
+// ========== MOVEMENT ==========
+function applyMovement(steps, forward) {
   isMoving = true;
   const player = players[currentPlayerIndex];
   const target = forward
@@ -994,38 +1360,9 @@ function movePlayer(steps, forward) {
 
   if (dir === 0) {
     isMoving = false;
-    handleLanding();
+    checkWinOrNextTurn();
     return;
   }
-
-  const moveStep = () => {
-    if ((dir > 0 && current < target) || (dir < 0 && current > target)) {
-      current += dir;
-      player.position = current;
-      positionToken(currentPlayerIndex);
-      playMoveSound();
-      renderScoreboard();
-      setTimeout(moveStep, 200);
-    } else {
-      isMoving = false;
-      setTimeout(handleLanding, 300);
-    }
-  };
-  moveStep();
-}
-
-// ========== CARD MOVEMENT (after drawing a card) ==========
-function applyCardMovement(steps, forward) {
-  isMoving = true;
-  const player = players[currentPlayerIndex];
-  const target = forward
-    ? Math.min(player.position + steps, WIN_SPACE)
-    : Math.max(player.position - steps, 0);
-
-  let current = player.position;
-  const dir = target > current ? 1 : target < current ? -1 : 0;
-
-  if (dir === 0) { isMoving = false; checkWinOrNextTurn(); return; }
 
   if (!forward) {
     document.getElementById('board-container').classList.add('shake');
@@ -1052,134 +1389,8 @@ function checkWinOrNextTurn() {
   if (players[currentPlayerIndex].position >= WIN_SPACE) {
     playerWins();
   } else {
-    setTimeout(nextTurn, 600);
+    setTimeout(nextTurn, 800);
   }
-}
-
-// ========== HANDLE LANDING ==========
-function handleLanding() {
-  const player = players[currentPlayerIndex];
-  const type = SPACE_TYPES[player.position];
-
-  if (player.position >= WIN_SPACE) {
-    playerWins();
-    return;
-  }
-
-  if (type === 'star') {
-    handleStarSpace();
-  } else if (CATEGORIES.includes(type)) {
-    drawCard(type);
-  } else {
-    nextTurn();
-  }
-}
-
-// ========== DRAW CARD ==========
-function drawCard(category) {
-  playCardSound();
-  const data = CARD_DATA[category];
-
-  // Decide: ~75% affirmation, ~25% setback (unless category has no setbacks)
-  const hasSetbacks = data.setbacks.length > 0;
-  const hasAffirmations = data.affirmations.length > 0;
-  let isAffirmation;
-
-  if (!hasSetbacks && !hasAffirmations) { nextTurn(); return; }
-  if (!hasSetbacks) isAffirmation = true;
-  else if (!hasAffirmations) isAffirmation = false;
-  else isAffirmation = Math.random() < 0.72;
-
-  const pool = isAffirmation ? data.affirmations : data.setbacks;
-  const usedKey = isAffirmation ? 'a' : 's';
-
-  // Avoid repeats
-  let available = pool.filter((_, i) => !usedCards[category][usedKey].includes(i));
-  if (available.length === 0) {
-    usedCards[category][usedKey] = [];
-    available = pool;
-  }
-  const cardIdx = pool.indexOf(available[Math.floor(Math.random() * available.length)]);
-  usedCards[category][usedKey].push(cardIdx);
-  const card = pool[cardIdx];
-
-  showCardDisplay(card, category, isAffirmation, data);
-}
-
-function showCardDisplay(card, category, isAffirmation, data) {
-  const display = document.getElementById('card-display');
-  const bgColor = isAffirmation ? data.bgColor : 'var(--setback-bg)';
-  const textColor = isAffirmation ? data.color : 'var(--setback)';
-
-  display.style.background = bgColor;
-  display.className = 'card-display flip-in';
-
-  const praise = isAffirmation
-    ? AFFIRMATION_PRAISE[Math.floor(Math.random() * AFFIRMATION_PRAISE.length)]
-    : SETBACK_COMFORT[Math.floor(Math.random() * SETBACK_COMFORT.length)];
-
-  const movementDir = isAffirmation ? 'ahead' : 'back';
-  const movementText = isAffirmation ? `Move Ahead ${card.move} \u2714` : `Move Back ${card.move} \u2718`;
-  const arrow = isAffirmation ? '\u2B06\uFE0F' : '\u2B07\uFE0F';
-
-  display.innerHTML = `
-    <span class="card-badge ${isAffirmation ? 'affirmation' : 'setback'}">${isAffirmation ? '\u2728 Affirmation' : '\u26A0\uFE0F Setback'}</span>
-    <div class="card-icon">${data.icon}</div>
-    <div class="card-text" style="color:${textColor}">"${card.text}"</div>
-    <div class="read-aloud-prompt" style="background:rgba(0,0,0,0.04); color:var(--text-light); border-radius:8px; padding:8px 12px; margin-top:8px; font-size:12px;">
-      \uD83D\uDD0A <strong>Read this aloud together!</strong>
-    </div>
-    <div class="card-movement ${movementDir}">${arrow} ${movementText}</div>
-    <div class="card-category-label">${data.name}</div>
-    <button class="card-read-btn" style="background:${isAffirmation ? 'var(--grass)' : 'var(--orange)'}"
-            onclick="onCardDone(${card.move}, ${isAffirmation})">
-      ${isAffirmation ? "I said it! Let's go! \uD83D\uDE80" : "I understand! Move on \uD83D\uDCAA"}
-    </button>
-  `;
-
-  // Log
-  const p = players[currentPlayerIndex];
-  if (isAffirmation) {
-    addLogEntry(currentPlayerIndex, `\u2728 "${card.text}" \u2014 Move ahead ${card.move}!`, 'log-ahead');
-  } else {
-    addLogEntry(currentPlayerIndex, `\u26A0\uFE0F "${card.text}" \u2014 Move back ${card.move}`, 'log-back');
-  }
-}
-
-function onCardDone(moveAmount, isAffirmation) {
-  const p = players[currentPlayerIndex];
-  if (isAffirmation) {
-    p.stars++;
-    p.affirmationsRead++;
-    playStarSound();
-    showCompliment();
-  } else {
-    playSetbackSound();
-  }
-  renderScoreboard();
-  applyCardMovement(moveAmount, isAffirmation);
-}
-
-// ========== STAR SPACE ==========
-function handleStarSpace() {
-  const p = players[currentPlayerIndex];
-  p.stars += 2;
-  playStarSound();
-  renderScoreboard();
-
-  const display = document.getElementById('card-display');
-  display.style.background = '#FFFDE7';
-  display.className = 'card-display flip-in';
-  display.innerHTML = `
-    <div class="card-icon" style="font-size:56px; animation: bounce 1s infinite;">\u2B50</div>
-    <div class="card-text" style="color:#F57F17; font-size:20px;">Bonus Star Space!</div>
-    <div style="color:#FF8F00; font-size:15px; margin-top:6px;">+2 Stars! You're amazing!</div>
-  `;
-
-  showCompliment();
-  spawnConfetti();
-  addLogEntry(currentPlayerIndex, "\u2B50 landed on Bonus Star! +2 stars!", 'log-ahead');
-  setTimeout(nextTurn, 2000);
 }
 
 // ========== NEXT TURN ==========
@@ -1187,8 +1398,25 @@ function nextTurn() {
   isRolling = false; isMoving = false;
   document.getElementById('roll-btn').disabled = false;
   currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+
+  // Handle skip turns (from "lose a turn" effects)
+  if (skipTurns[currentPlayerIndex] && skipTurns[currentPlayerIndex] > 0) {
+    skipTurns[currentPlayerIndex]--;
+    addLogEntry(currentPlayerIndex, "skips a turn \u23F8");
+    renderScoreboard();
+    updateTurnIndicator();
+    setTimeout(nextTurn, 1000);
+    return;
+  }
+
   renderScoreboard();
   updateTurnIndicator();
+
+  // Reset dice display
+  const dice = document.getElementById('dice');
+  dice.textContent = '\uD83C\uDFB2';
+  dice.style.background = 'white';
+  document.getElementById('dice-category-display').innerHTML = '';
 
   const display = document.getElementById('card-display');
   display.style.background = '#f8f9fa';
@@ -1204,7 +1432,7 @@ function playerWins() {
   playWinSound(); spawnConfetti();
   setTimeout(() => {
     const winner = players[currentPlayerIndex];
-    document.getElementById('win-title').textContent = `${winner.name} Reached the Finish! \uD83C\uDF89`;
+    document.getElementById('win-title').textContent = `${winner.name} Reached Self-Esteem City! \uD83C\uDF89`;
     document.getElementById('win-subtitle').textContent = "But remember \u2014 everyone's a winner in the Self-Esteem Game!";
 
     const sorted = [...players].sort((a, b) => b.stars - a.stars);
@@ -1241,8 +1469,7 @@ function addLogEntry(playerIdx, text, className) {
   const name = playerIdx !== null ? `<strong>${players[playerIdx].name}</strong> ` : '';
   entry.innerHTML = `${avatar} ${name}${text}`;
   entries.prepend(entry);
-  // Keep max 20 entries
-  while (entries.children.length > 20) entries.removeChild(entries.lastChild);
+  while (entries.children.length > 25) entries.removeChild(entries.lastChild);
 }
 
 // ========== COMPLIMENTS ==========
